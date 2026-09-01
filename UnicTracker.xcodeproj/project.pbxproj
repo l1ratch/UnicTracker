@@ -1,0 +1,531 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA0100012C85000100000001 /* UnicTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200012C85000100000001 /* UnicTrackerApp.swift */; };
+		AA0100022C85000100000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200022C85000100000002 /* ContentView.swift */; };
+		AA0100032C85000100000003 /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200032C85000100000003 /* AppTheme.swift */; };
+		AA0100042C85000100000004 /* StudyTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200042C85000100000004 /* StudyTask.swift */; };
+		AA0100052C85000100000005 /* Subject.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200052C85000100000005 /* Subject.swift */; };
+		AA0100062C85000100000006 /* SessionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200062C85000100000006 /* SessionItem.swift */; };
+		AA0100072C85000100000007 /* Semester.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200072C85000100000007 /* Semester.swift */; };
+		AA0100082C85000100000008 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200082C85000100000008 /* HapticManager.swift */; };
+		AA0100092C85000100000009 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200092C85000100000009 /* StorageService.swift */; };
+		AA01000A2C8500010000000A /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000A2C8500010000000A /* DataStore.swift */; };
+		AA01000B2C8500010000000B /* LiquidGlassModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000B2C8500010000000B /* LiquidGlassModifier.swift */; };
+		AA01000C2C8500010000000C /* MeshGradientBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000C2C8500010000000C /* MeshGradientBackground.swift */; };
+		AA01000D2C8500010000000D /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000D2C8500010000000D /* GlassCard.swift */; };
+		AA01000E2C8500010000000E /* GlassProgressRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000E2C8500010000000E /* GlassProgressRing.swift */; };
+		AA01000F2C8500010000000F /* GlassButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02000F2C8500010000000F /* GlassButton.swift */; };
+		AA0100102C85000100000010 /* PriorityBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200102C85000100000010 /* PriorityBadge.swift */; };
+		AA0100112C85000100000011 /* TaskRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200112C85000100000011 /* TaskRowView.swift */; };
+		AA0100122C85000100000012 /* TaskDetailSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200122C85000100000012 /* TaskDetailSheet.swift */; };
+		AA0100132C85000100000013 /* MainTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200132C85000100000013 /* MainTrackerView.swift */; };
+		AA0100142C85000100000014 /* GradePickerSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200142C85000100000014 /* GradePickerSheet.swift */; };
+		AA0100152C85000100000015 /* SessionTrackerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200152C85000100000015 /* SessionTrackerView.swift */; };
+		AA0100162C85000100000016 /* TaskEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200162C85000100000016 /* TaskEditView.swift */; };
+		AA0100172C85000100000017 /* SubjectEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200172C85000100000017 /* SubjectEditView.swift */; };
+		AA0100182C85000100000018 /* SemesterEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200182C85000100000018 /* SemesterEditView.swift */; };
+		AA0100192C85000100000019 /* ConstructorHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200192C85000100000019 /* ConstructorHubView.swift */; };
+		AA01001A2C8500010000001A /* FinishSemesterModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02001A2C8500010000001A /* FinishSemesterModal.swift */; };
+		AA01001B2C8500010000001B /* ArchiveHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02001B2C8500010000001B /* ArchiveHistoryView.swift */; };
+		AA01001C2C8500010000001C /* JSONPreviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02001C2C8500010000001C /* JSONPreviewSheet.swift */; };
+		AA01001D2C8500010000001D /* SettingsHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02001D2C8500010000001D /* SettingsHubView.swift */; };
+		AA01001E2C8500010000001E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA02001E2C8500010000001E /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AA0000012C85000100000001 /* UnicTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UnicTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA0200012C85000100000001 /* UnicTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnicTrackerApp.swift; sourceTree = "<group>"; };
+		AA0200022C85000100000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AA0200032C85000100000003 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		AA0200042C85000100000004 /* StudyTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StudyTask.swift; sourceTree = "<group>"; };
+		AA0200052C85000100000005 /* Subject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subject.swift; sourceTree = "<group>"; };
+		AA0200062C85000100000006 /* SessionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionItem.swift; sourceTree = "<group>"; };
+		AA0200072C85000100000007 /* Semester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Semester.swift; sourceTree = "<group>"; };
+		AA0200082C85000100000008 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
+		AA0200092C85000100000009 /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
+		AA02000A2C8500010000000A /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		AA02000B2C8500010000000B /* LiquidGlassModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiquidGlassModifier.swift; sourceTree = "<group>"; };
+		AA02000C2C8500010000000C /* MeshGradientBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshGradientBackground.swift; sourceTree = "<group>"; };
+		AA02000D2C8500010000000D /* GlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCard.swift; sourceTree = "<group>"; };
+		AA02000E2C8500010000000E /* GlassProgressRing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassProgressRing.swift; sourceTree = "<group>"; };
+		AA02000F2C8500010000000F /* GlassButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassButton.swift; sourceTree = "<group>"; };
+		AA0200102C85000100000010 /* PriorityBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriorityBadge.swift; sourceTree = "<group>"; };
+		AA0200112C85000100000011 /* TaskRowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRowView.swift; sourceTree = "<group>"; };
+		AA0200122C85000100000012 /* TaskDetailSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailSheet.swift; sourceTree = "<group>"; };
+		AA0200132C85000100000013 /* MainTrackerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTrackerView.swift; sourceTree = "<group>"; };
+		AA0200142C85000100000014 /* GradePickerSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradePickerSheet.swift; sourceTree = "<group>"; };
+		AA0200152C85000100000015 /* SessionTrackerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTrackerView.swift; sourceTree = "<group>"; };
+		AA0200162C85000100000016 /* TaskEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEditView.swift; sourceTree = "<group>"; };
+		AA0200172C85000100000017 /* SubjectEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubjectEditView.swift; sourceTree = "<group>"; };
+		AA0200182C85000100000018 /* SemesterEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SemesterEditView.swift; sourceTree = "<group>"; };
+		AA0200192C85000100000019 /* ConstructorHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstructorHubView.swift; sourceTree = "<group>"; };
+		AA02001A2C8500010000001A /* FinishSemesterModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinishSemesterModal.swift; sourceTree = "<group>"; };
+		AA02001B2C8500010000001B /* ArchiveHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveHistoryView.swift; sourceTree = "<group>"; };
+		AA02001C2C8500010000001C /* JSONPreviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONPreviewSheet.swift; sourceTree = "<group>"; };
+		AA02001D2C8500010000001D /* SettingsHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHubView.swift; sourceTree = "<group>"; };
+		AA02001E2C8500010000001E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AA02001F2C8500010000001F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AA0300012C85000100000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AA0400012C85000100000001 = {
+			isa = PBXGroup;
+			children = (
+				AA0400022C85000100000002 /* UnicTracker */,
+				AA0400032C85000100000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA0400022C85000100000002 /* UnicTracker */ = {
+			isa = PBXGroup;
+			children = (
+				AA0400042C85000100000004 /* App */,
+				AA0400052C85000100000005 /* Models */,
+				AA0400062C85000100000006 /* Services */,
+				AA0400072C85000100000007 /* DesignSystem */,
+				AA0400082C85000100000008 /* Views */,
+				AA02001E2C8500010000001E /* Assets.xcassets */,
+				AA02001F2C8500010000001F /* Info.plist */,
+			);
+			path = UnicTracker;
+			sourceTree = "<group>";
+		};
+		AA0400032C85000100000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000012C85000100000001 /* UnicTracker.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA0400042C85000100000004 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				AA0200012C85000100000001 /* UnicTrackerApp.swift */,
+				AA0200022C85000100000002 /* ContentView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		AA0400052C85000100000005 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				AA0200032C85000100000003 /* AppTheme.swift */,
+				AA0200042C85000100000004 /* StudyTask.swift */,
+				AA0200052C85000100000005 /* Subject.swift */,
+				AA0200062C85000100000006 /* SessionItem.swift */,
+				AA0200072C85000100000007 /* Semester.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AA0400062C85000100000006 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				AA0200082C85000100000008 /* HapticManager.swift */,
+				AA0200092C85000100000009 /* StorageService.swift */,
+				AA02000A2C8500010000000A /* DataStore.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		AA0400072C85000100000007 /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				AA02000B2C8500010000000B /* LiquidGlassModifier.swift */,
+				AA02000C2C8500010000000C /* MeshGradientBackground.swift */,
+				AA02000D2C8500010000000D /* GlassCard.swift */,
+				AA02000E2C8500010000000E /* GlassProgressRing.swift */,
+				AA02000F2C8500010000000F /* GlassButton.swift */,
+				AA0200102C85000100000010 /* PriorityBadge.swift */,
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		AA0400082C85000100000008 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AA0400092C85000100000009 /* Tracker */,
+				AA04000A2C8500010000000A /* Session */,
+				AA04000B2C8500010000000B /* Constructor */,
+				AA04000C2C8500010000000C /* Archive */,
+				AA04000D2C8500010000000D /* Settings */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		AA0400092C85000100000009 /* Tracker */ = {
+			isa = PBXGroup;
+			children = (
+				AA0200112C85000100000011 /* TaskRowView.swift */,
+				AA0200122C85000100000012 /* TaskDetailSheet.swift */,
+				AA0200132C85000100000013 /* MainTrackerView.swift */,
+			);
+			path = Tracker;
+			sourceTree = "<group>";
+		};
+		AA04000A2C8500010000000A /* Session */ = {
+			isa = PBXGroup;
+			children = (
+				AA0200142C85000100000014 /* GradePickerSheet.swift */,
+				AA0200152C85000100000015 /* SessionTrackerView.swift */,
+			);
+			path = Session;
+			sourceTree = "<group>";
+		};
+		AA04000B2C8500010000000B /* Constructor */ = {
+			isa = PBXGroup;
+			children = (
+				AA0200162C85000100000016 /* TaskEditView.swift */,
+				AA0200172C85000100000017 /* SubjectEditView.swift */,
+				AA0200182C85000100000018 /* SemesterEditView.swift */,
+				AA0200192C85000100000019 /* ConstructorHubView.swift */,
+			);
+			path = Constructor;
+			sourceTree = "<group>";
+		};
+		AA04000C2C8500010000000C /* Archive */ = {
+			isa = PBXGroup;
+			children = (
+				AA02001A2C8500010000001A /* FinishSemesterModal.swift */,
+				AA02001B2C8500010000001B /* ArchiveHistoryView.swift */,
+			);
+			path = Archive;
+			sourceTree = "<group>";
+		};
+		AA04000D2C8500010000000D /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				AA02001C2C8500010000001C /* JSONPreviewSheet.swift */,
+				AA02001D2C8500010000001D /* SettingsHubView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA0500012C85000100000001 /* UnicTracker */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA0600012C85000100000001 /* Build configuration list for PBXNativeTarget "UnicTracker" */;
+			buildPhases = (
+				AA0700012C85000100000001 /* Sources */,
+				AA0300012C85000100000001 /* Frameworks */,
+				AA0800012C85000100000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = UnicTracker;
+			productName = UnicTracker;
+			productReference = AA0000012C85000100000001 /* UnicTracker.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA0900012C85000100000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					AA0500012C85000100000001 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = AA0600022C85000100000002 /* Build configuration list for PBXProject "UnicTracker" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = ru;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				ru,
+				Base,
+			);
+			mainGroup = AA0400012C85000100000001;
+			productRefGroup = AA0400032C85000100000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA0500012C85000100000001 /* UnicTracker */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA0800012C85000100000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA01001E2C8500010000001E /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA0700012C85000100000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA0100012C85000100000001 /* UnicTrackerApp.swift in Sources */,
+				AA0100022C85000100000002 /* ContentView.swift in Sources */,
+				AA0100032C85000100000003 /* AppTheme.swift in Sources */,
+				AA0100042C85000100000004 /* StudyTask.swift in Sources */,
+				AA0100052C85000100000005 /* Subject.swift in Sources */,
+				AA0100062C85000100000006 /* SessionItem.swift in Sources */,
+				AA0100072C85000100000007 /* Semester.swift in Sources */,
+				AA0100082C85000100000008 /* HapticManager.swift in Sources */,
+				AA0100092C85000100000009 /* StorageService.swift in Sources */,
+				AA01000A2C8500010000000A /* DataStore.swift in Sources */,
+				AA01000B2C8500010000000B /* LiquidGlassModifier.swift in Sources */,
+				AA01000C2C8500010000000C /* MeshGradientBackground.swift in Sources */,
+				AA01000D2C8500010000000D /* GlassCard.swift in Sources */,
+				AA01000E2C8500010000000E /* GlassProgressRing.swift in Sources */,
+				AA01000F2C8500010000000F /* GlassButton.swift in Sources */,
+				AA0100102C85000100000010 /* PriorityBadge.swift in Sources */,
+				AA0100112C85000100000011 /* TaskRowView.swift in Sources */,
+				AA0100122C85000100000012 /* TaskDetailSheet.swift in Sources */,
+				AA0100132C85000100000013 /* MainTrackerView.swift in Sources */,
+				AA0100142C85000100000014 /* GradePickerSheet.swift in Sources */,
+				AA0100152C85000100000015 /* SessionTrackerView.swift in Sources */,
+				AA0100162C85000100000016 /* TaskEditView.swift in Sources */,
+				AA0100172C85000100000017 /* SubjectEditView.swift in Sources */,
+				AA0100182C85000100000018 /* SemesterEditView.swift in Sources */,
+				AA0100192C85000100000019 /* ConstructorHubView.swift in Sources */,
+				AA01001A2C8500010000001A /* FinishSemesterModal.swift in Sources */,
+				AA01001B2C8500010000001B /* ArchiveHistoryView.swift in Sources */,
+				AA01001C2C8500010000001C /* JSONPreviewSheet.swift in Sources */,
+				AA01001D2C8500010000001D /* SettingsHubView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AA1000012C85000100000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDEFINED_VARIABLES = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AA1000022C85000100000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDEFINED_VARIABLES = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AA1000032C85000100000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = UnicTracker/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = UnicTracker;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.7.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ru.l1ratch.UnicTracker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		AA1000042C85000100000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = UnicTracker/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = UnicTracker;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.7.0;
+				PRODUCT_BUNDLE_IDENTIFIER = ru.l1ratch.UnicTracker;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA0600012C85000100000001 /* Build configuration list for PBXNativeTarget "UnicTracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA1000032C85000100000003 /* Debug */,
+				AA1000042C85000100000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA0600022C85000100000002 /* Build configuration list for PBXProject "UnicTracker" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA1000012C85000100000001 /* Debug */,
+				AA1000022C85000100000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = AA0900012C85000100000001 /* Project object */;
+}

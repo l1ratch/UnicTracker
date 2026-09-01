@@ -1,0 +1,63 @@
+name: Build Unsigned IPA
+
+on:
+  push:
+    branches: [ "main", "master" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-ipa:
+    runs-on: macos-14
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Select Xcode Version
+        run: |
+          sudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode.app
+          xcodebuild -version
+
+      - name: Build Application for iOS (No Code Signing)
+        run: |
+          mkdir -p build
+          xcodebuild -project UnicTracker.xcodeproj \
+            -scheme UnicTracker \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination "generic/platform=iOS" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            CONFIGURATION_BUILD_DIR=build/Release-iphoneos \
+            clean build
+
+      - name: Package Unsigned IPA
+        run: |
+          mkdir -p Payload
+          cp -r build/Release-iphoneos/UnicTracker.app Payload/
+          zip -r -9 UnicTracker-unsigned.ipa Payload
+          ls -lh UnicTracker-unsigned.ipa
+
+      - name: Upload IPA Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: UnicTracker-unsigned-ipa
+          path: UnicTracker-unsigned.ipa
+          retention-days: 14
+
+      - name: Create GitHub Release (On Tag)
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: UnicTracker-unsigned.ipa
+          draft: false
+          prerelease: false
+          generate_release_notes: true
