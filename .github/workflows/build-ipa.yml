@@ -21,28 +21,28 @@ jobs:
 
       - name: Select Xcode Version
         run: |
-          sudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode.app
+          sudo xcode-select -s /Applications/Xcode_15.4.app || sudo xcode-select -s /Applications/Xcode_16.0.app || sudo xcode-select -s /Applications/Xcode.app
           xcodebuild -version
 
-      - name: Build Application for iOS (No Code Signing)
+      - name: Build and Archive for iOS (No Code Signing)
         run: |
           mkdir -p build
-          xcodebuild -project UnicTracker.xcodeproj \
+          xcodebuild archive \
+            -project UnicTracker.xcodeproj \
             -scheme UnicTracker \
             -configuration Release \
             -sdk iphoneos \
             -destination "generic/platform=iOS" \
+            -archivePath build/UnicTracker.xcarchive \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            PROVISIONING_PROFILE_SPECIFIER="" \
-            CONFIGURATION_BUILD_DIR=build/Release-iphoneos \
-            clean build
+            PROVISIONING_PROFILE_SPECIFIER=""
 
       - name: Package Unsigned IPA
         run: |
           mkdir -p Payload
-          cp -r build/Release-iphoneos/UnicTracker.app Payload/
+          cp -r build/UnicTracker.xcarchive/Products/Applications/UnicTracker.app Payload/
           zip -r -9 UnicTracker-unsigned.ipa Payload
           ls -lh UnicTracker-unsigned.ipa
 

@@ -234,13 +234,13 @@ public struct SettingsHubView: View {
 
             Toggle("Динамический фоновый градиент", isOn: $store.theme.enableAmbientGlow)
                 .foregroundColor(.white)
-                .onChange(of: store.theme.enableAmbientGlow) { _, _ in
+                .onChange(of: store.theme.enableAmbientGlow) { _ in
                     store.persist()
                 }
 
             Toggle("Тактильный отклик (Haptics)", isOn: $store.theme.enableHaptics)
                 .foregroundColor(.white)
-                .onChange(of: store.theme.enableHaptics) { _, _ in
+                .onChange(of: store.theme.enableHaptics) { _ in
                     store.persist()
                 }
         }

@@ -22,7 +22,7 @@ public struct GlassButtonStyle: ButtonStyle {
                 specular: true,
                 glow: isProminent ? 0.8 : 0.3
             )
-            .onChange(of: configuration.isPressed) { _, isPressed in
+            .onChange(of: configuration.isPressed) { isPressed in
                 if isPressed {
                     HapticManager.shared.buttonPress()
                 }
