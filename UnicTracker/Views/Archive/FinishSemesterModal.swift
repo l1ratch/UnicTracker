@@ -10,7 +10,6 @@ public struct FinishSemesterModal: View {
 
     public init(store: DataStore) {
         self.store = store
-        let currentCourse = store.activeSemester?.courseNumber ?? 1
         let currentSemNum = store.activeSemester?.semesterNumber ?? 1
         let nextSemNum = currentSemNum + 1
         let nextCourse = (nextSemNum + 1) / 2
@@ -139,7 +138,6 @@ public struct FinishSemesterModal: View {
 
     private func finishAndProceed() {
         let currentSem = store.activeSemester
-        let currentCourse = currentSem?.courseNumber ?? 1
         let currentNum = currentSem?.semesterNumber ?? 1
 
         store.finishAndArchiveActiveSemester(notes: archiveNotes)

@@ -26,7 +26,6 @@ jobs:
 
       - name: Build Application for iOS (No Code Signing)
         run: |
-          mkdir -p build/Release-iphoneos
           xcodebuild \
             -project UnicTracker.xcodeproj \
             -scheme UnicTracker \
@@ -39,13 +38,14 @@ jobs:
             AD_HOC_CODE_SIGNING_ALLOWED=YES \
             VALIDATE_PRODUCT=NO \
             PROVISIONING_PROFILE_SPECIFIER="" \
-            CONFIGURATION_BUILD_DIR="$PWD/build/Release-iphoneos" \
-            clean build
+            build
 
       - name: Package Unsigned IPA
         run: |
           mkdir -p Payload
-          cp -r "$PWD/build/Release-iphoneos/UnicTracker.app" Payload/
+          APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name "UnicTracker.app" -type d | head -n 1)
+          echo "Found compiled app at: $APP_PATH"
+          cp -r "$APP_PATH" Payload/
           zip -r -9 UnicTracker-unsigned.ipa Payload
           ls -lh UnicTracker-unsigned.ipa
 

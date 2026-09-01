@@ -66,7 +66,7 @@ public final class StorageService {
         }
         do {
             let data = try Data(contentsOf: fileURL)
-            return try jsonDecoder.decode(AppBackupData.self, data: data)
+            return try jsonDecoder.decode(AppBackupData.self, from: data)
         } catch {
             print("StorageService: Error reading database: \(error.localizedDescription)")
             return nil
@@ -92,7 +92,7 @@ public final class StorageService {
 
     // MARK: - Import from JSON Data
     public func importFromJSON(data: Data) throws -> AppBackupData {
-        return try jsonDecoder.decode(AppBackupData.self, data: data)
+        return try jsonDecoder.decode(AppBackupData.self, from: data)
     }
 
     // MARK: - Clear All Local Files

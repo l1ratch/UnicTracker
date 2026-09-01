@@ -123,7 +123,8 @@ public struct ArchiveHistoryView: View {
                         .font(.system(size: 11, weight: .medium))
                         .foregroundColor(.white.opacity(0.5))
                     Text(notes)
-                        .font(.system(size: 13, design: .italic))
+                        .font(.system(size: 13))
+                        .italic()
                         .foregroundColor(.white.opacity(0.8))
                 }
                 .padding(10)
