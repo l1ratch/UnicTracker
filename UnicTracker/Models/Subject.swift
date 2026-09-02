@@ -167,6 +167,27 @@ public struct Subject: Identifiable, Codable, Equatable {
         self.practicesTotal = try container.decodeIfPresent(Int.self, forKey: .practicesTotal) ?? 16
     }
 
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(semesterId, forKey: .semesterId)
+        try container.encode(name, forKey: .name)
+        try container.encode(shortCode, forKey: .shortCode)
+        try container.encode(iconName, forKey: .iconName)
+        try container.encode(colorHex, forKey: .colorHex)
+        try container.encode(teacherName, forKey: .teacherName)
+        try container.encode(roomOrLink, forKey: .roomOrLink)
+        try container.encode(assessmentType, forKey: .assessmentType)
+        try container.encode(importance, forKey: .importance)
+        try container.encodeIfPresent(minPointsForAdmission, forKey: .minPointsForAdmission)
+        try container.encode(isAdmittedToExam, forKey: .isAdmittedToExam)
+        try container.encode(notes, forKey: .notes)
+        try container.encode(lecturesAttended, forKey: .lecturesAttended)
+        try container.encode(lecturesTotal, forKey: .lecturesTotal)
+        try container.encode(practicesAttended, forKey: .practicesAttended)
+        try container.encode(practicesTotal, forKey: .practicesTotal)
+    }
+
     public var themeColor: Color {
         Color(hex: colorHex)
     }

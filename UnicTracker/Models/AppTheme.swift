@@ -167,4 +167,14 @@ public struct AppThemeSettings: Codable, Equatable {
         self.enableAmbientGlow = try container.decodeIfPresent(Bool.self, forKey: .enableAmbientGlow) ?? true
         self.compactCardView = try container.decodeIfPresent(Bool.self, forKey: .compactCardView) ?? false
     }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(themeMode, forKey: .themeMode)
+        try container.encode(preset, forKey: .preset)
+        try container.encode(glassDepth, forKey: .glassDepth)
+        try container.encode(enableHaptics, forKey: .enableHaptics)
+        try container.encode(enableAmbientGlow, forKey: .enableAmbientGlow)
+        try container.encode(compactCardView, forKey: .compactCardView)
+    }
 }

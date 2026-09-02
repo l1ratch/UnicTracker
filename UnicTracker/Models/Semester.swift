@@ -57,6 +57,9 @@ public struct Semester: Identifiable, Codable, Equatable {
     enum CodingKeys: String, CodingKey {
         case id, title, academicYear, courseNumber, semesterNumber
         case startDate, endDate, isArchived, archivedAt, archivedSummary
+    }
+
+    private enum LegacyCodingKeys: String, CodingKey {
         case sessionStartDate, sessionEndDate
     }
 
@@ -68,14 +71,30 @@ public struct Semester: Identifiable, Codable, Equatable {
         self.courseNumber = try container.decodeIfPresent(Int.self, forKey: .courseNumber) ?? 1
         self.semesterNumber = try container.decodeIfPresent(Int.self, forKey: .semesterNumber) ?? 1
         self.startDate = try container.decodeIfPresent(Date.self, forKey: .startDate) ?? Date()
+
+        let legacyContainer = try? decoder.container(keyedBy: LegacyCodingKeys.self)
+        let legacyEnd = try? legacyContainer?.decodeIfPresent(Date.self, forKey: .sessionEndDate)
+
         let cal = Calendar.current
         let defaultEnd = cal.date(byAdding: .month, value: 5, to: Date()) ?? Date()
-        self.endDate = try container.decodeIfPresent(Date.self, forKey: .endDate)
-            ?? container.decodeIfPresent(Date.self, forKey: .sessionEndDate)
-            ?? defaultEnd
+        self.endDate = (try container.decodeIfPresent(Date.self, forKey: .endDate)) ?? legacyEnd ?? defaultEnd
         self.isArchived = try container.decodeIfPresent(Bool.self, forKey: .isArchived) ?? false
         self.archivedAt = try container.decodeIfPresent(Date.self, forKey: .archivedAt)
         self.archivedSummary = try container.decodeIfPresent(ArchivedSemesterSummary.self, forKey: .archivedSummary)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(title, forKey: .title)
+        try container.encode(academicYear, forKey: .academicYear)
+        try container.encode(courseNumber, forKey: .courseNumber)
+        try container.encode(semesterNumber, forKey: .semesterNumber)
+        try container.encode(startDate, forKey: .startDate)
+        try container.encode(endDate, forKey: .endDate)
+        try container.encode(isArchived, forKey: .isArchived)
+        try container.encodeIfPresent(archivedAt, forKey: .archivedAt)
+        try container.encodeIfPresent(archivedSummary, forKey: .archivedSummary)
     }
 
     public var daysRemainingToEnd: Int {

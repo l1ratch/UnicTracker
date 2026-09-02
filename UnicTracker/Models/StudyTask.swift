@@ -173,6 +173,22 @@ public struct StudyTask: Identifiable, Codable, Equatable {
         self.createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt) ?? Date()
     }
 
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(subjectId, forKey: .subjectId)
+        try container.encode(title, forKey: .title)
+        try container.encode(taskDescription, forKey: .taskDescription)
+        try container.encode(category, forKey: .category)
+        try container.encode(priority, forKey: .priority)
+        try container.encode(status, forKey: .status)
+        try container.encode(subtasks, forKey: .subtasks)
+        try container.encodeIfPresent(dueDate, forKey: .dueDate)
+        try container.encodeIfPresent(pointsEarned, forKey: .pointsEarned)
+        try container.encodeIfPresent(maxPoints, forKey: .maxPoints)
+        try container.encode(createdAt, forKey: .createdAt)
+    }
+
     public var completionRatio: Double {
         if status == .completed { return 1.0 }
         if subtasks.isEmpty {
