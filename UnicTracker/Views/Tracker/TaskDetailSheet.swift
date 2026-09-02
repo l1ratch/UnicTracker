@@ -7,6 +7,7 @@ public struct TaskDetailSheet: View {
 
     @State private var newSubtaskText: String = ""
     @State private var showDeleteConfirm: Bool = false
+    @State private var showEditTaskSheet: Bool = false
 
     public init(store: DataStore, task: StudyTask) {
         self.store = store
@@ -266,6 +267,20 @@ public struct TaskDetailSheet: View {
             .navigationTitle("Детали задания")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        showEditTaskSheet = true
+                        HapticManager.shared.touchGlass()
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "pencil")
+                            Text("Править")
+                        }
+                        .foregroundColor(.cyan)
+                        .font(.system(size: 15, weight: .semibold))
+                    }
+                }
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Готово") {
                         store.saveTask(task)
@@ -273,6 +288,14 @@ public struct TaskDetailSheet: View {
                     }
                     .foregroundColor(.cyan)
                     .font(.system(size: 16, weight: .bold))
+                }
+            }
+            .sheet(isPresented: $showEditTaskSheet) {
+                TaskEditView(store: store, taskToEdit: task, defaultSubjectId: task.subjectId)
+            }
+            .onChange(of: showEditTaskSheet) {
+                if !showEditTaskSheet, let updated = store.tasks.first(where: { $0.id == task.id }) {
+                    self.task = updated
                 }
             }
             .alert("Удалить задание?", isPresented: $showDeleteConfirm) {

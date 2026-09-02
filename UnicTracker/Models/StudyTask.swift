@@ -153,6 +153,26 @@ public struct StudyTask: Identifiable, Codable, Equatable {
         self.createdAt = createdAt
     }
 
+    enum CodingKeys: String, CodingKey {
+        case id, subjectId, title, taskDescription, category, priority, status, subtasks, dueDate, pointsEarned, maxPoints, createdAt
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        self.subjectId = try container.decodeIfPresent(UUID.self, forKey: .subjectId) ?? UUID()
+        self.title = try container.decodeIfPresent(String.self, forKey: .title) ?? ""
+        self.taskDescription = try container.decodeIfPresent(String.self, forKey: .taskDescription) ?? ""
+        self.category = try container.decodeIfPresent(TaskCategory.self, forKey: .category) ?? .lab
+        self.priority = try container.decodeIfPresent(TaskPriority.self, forKey: .priority) ?? .medium
+        self.status = try container.decodeIfPresent(TaskStatus.self, forKey: .status) ?? .pending
+        self.subtasks = try container.decodeIfPresent([Subtask].self, forKey: .subtasks) ?? []
+        self.dueDate = try container.decodeIfPresent(Date.self, forKey: .dueDate)
+        self.pointsEarned = try container.decodeIfPresent(Double.self, forKey: .pointsEarned)
+        self.maxPoints = try container.decodeIfPresent(Double.self, forKey: .maxPoints)
+        self.createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt) ?? Date()
+    }
+
     public var completionRatio: Double {
         if status == .completed { return 1.0 }
         if subtasks.isEmpty {

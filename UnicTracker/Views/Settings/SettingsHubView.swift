@@ -7,8 +7,6 @@ public struct SettingsHubView: View {
     @ObservedObject var store: DataStore
 
     @State private var showSemesterEdit: Bool = false
-    @State private var showSubjectEdit: Bool = false
-    @State private var selectedSubjectToEdit: Subject? = nil
     @State private var showFinishSemester: Bool = false
     @State private var showArchiveHistory: Bool = false
 
@@ -27,94 +25,137 @@ public struct SettingsHubView: View {
     public var body: some View {
         NavigationStack {
             Form {
-                // MARK: - Section: Semester & Subjects Constructor
-                Section("Конструктор семестра и предметов") {
-                    Button {
-                        showSemesterEdit = true
-                        HapticManager.shared.touchGlass()
-                    } label: {
-                        HStack {
-                            Label(store.activeSemester?.title ?? "Создать семестр", systemImage: "calendar.badge.clock")
-                            Spacer()
-                            Image(systemName: "pencil")
+                // MARK: - Section 1: Academic Semester
+                Section {
+                    if let sem = store.activeSemester {
+                        VStack(alignment: .leading, spacing: 10) {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(sem.title)
+                                        .font(.system(size: 17, weight: .bold, design: .rounded))
+                                        .foregroundColor(.primary)
+
+                                    Text("\(sem.courseNumber) курс • \(sem.academicYear)")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Button {
+                                    showSemesterEdit = true
+                                    HapticManager.shared.touchGlass()
+                                } label: {
+                                    Image(systemName: "pencil.circle.fill")
+                                        .font(.system(size: 26))
+                                        .foregroundColor(.cyan)
+                                }
+                                .buttonStyle(BorderlessButtonStyle())
+                            }
+
+                            Divider()
+
+                            HStack {
+                                Label("Сроки:", systemImage: "calendar")
+                                    .font(.system(size: 13))
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Text("\(sem.startDate.formatted(date: .abbreviated, time: .omitted)) – \(sem.endDate.formatted(date: .abbreviated, time: .omitted))")
+                                    .font(.system(size: 13, weight: .medium))
+                            }
+
+                            HStack {
+                                Label("До завершения:", systemImage: "clock")
+                                    .font(.system(size: 13))
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                                Text("\(sem.daysRemainingToEnd) дн.")
+                                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                                    .foregroundColor(.cyan)
+                            }
+                        }
+                        .padding(.vertical, 4)
+
+                        Button {
+                            showFinishSemester = true
+                            HapticManager.shared.touchGlass()
+                        } label: {
+                            Label("Завершить семестр и в архив", systemImage: "archivebox.fill")
+                                .foregroundColor(.purple)
+                        }
+                    } else {
+                        Button {
+                            showSemesterEdit = true
+                            HapticManager.shared.touchGlass()
+                        } label: {
+                            Label("Создать семестр", systemImage: "plus.circle.fill")
                                 .foregroundColor(.cyan)
                         }
                     }
-
-                    Button {
-                        selectedSubjectToEdit = nil
-                        showSubjectEdit = true
-                        HapticManager.shared.touchGlass()
-                    } label: {
-                        Label("Добавить предмет / сгенерировать лабы", systemImage: "plus.circle.fill")
-                            .foregroundColor(.cyan)
-                    }
-
-                    if !store.activeSubjects.isEmpty {
-                        ForEach(store.activeSubjects) { subject in
-                            Button {
-                                selectedSubjectToEdit = subject
-                                showSubjectEdit = true
-                                HapticManager.shared.touchGlass()
-                            } label: {
-                                HStack(spacing: 8) {
-                                    Text(subject.shortCode)
-                                        .font(.system(size: 11, weight: .bold))
-                                        .foregroundColor(subject.themeColor)
-                                        .padding(.horizontal, 5)
-                                        .padding(.vertical, 2)
-                                        .background(RoundedRectangle(cornerRadius: 4).fill(subject.themeColor.opacity(0.18)))
-
-                                    Text(subject.name)
-                                        .font(.system(size: 14))
-                                        .foregroundColor(.white)
-                                        .lineLimit(1)
-
-                                    Spacer()
-
-                                    Circle()
-                                        .fill(subject.importance.color)
-                                        .frame(width: 6, height: 6)
-
-                                    Text(subject.importance.rawValue)
-                                        .font(.system(size: 10, weight: .medium))
-                                        .foregroundColor(subject.importance.color)
-                                }
-                            }
-                        }
-                        .onDelete { indexSet in
-                            for idx in indexSet {
-                                store.deleteSubject(store.activeSubjects[idx])
-                            }
-                        }
-                    }
+                } header: {
+                    Text("Учебный семестр")
                 }
 
-                // MARK: - Section: Archive Lifecycle
-                Section("Завершение семестра и архив") {
-                    Button {
-                        showFinishSemester = true
-                        HapticManager.shared.touchGlass()
-                    } label: {
-                        Label("Завершить семестр и архивировать", systemImage: "archivebox.fill")
-                            .foregroundColor(.purple)
-                    }
-                    .disabled(store.activeSemester == nil)
+                // MARK: - Section 2: Appearance & Theme
+                Section {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Режим оформления")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.secondary)
 
+                        Picker("Режим темы", selection: $store.theme.themeMode) {
+                            ForEach(AppThemeMode.allCases) { mode in
+                                Text(mode.rawValue).tag(mode)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .onChange(of: store.theme.themeMode) {
+                            store.persist()
+                        }
+                    }
+                    .padding(.vertical, 2)
+
+                    Picker("Цветовая палитра", selection: $store.theme.preset) {
+                        ForEach(LiquidThemePreset.allCases) { preset in
+                            Text(preset.displayName).tag(preset)
+                        }
+                    }
+                    .onChange(of: store.theme.preset) {
+                        store.persist()
+                    }
+
+                    Toggle("Тактильный отклик (Haptics)", isOn: $store.theme.enableHaptics)
+                        .onChange(of: store.theme.enableHaptics) {
+                            store.persist()
+                        }
+
+                    Toggle("Мягкое свечение фона", isOn: $store.theme.enableAmbientGlow)
+                        .onChange(of: store.theme.enableAmbientGlow) {
+                            store.persist()
+                        }
+                } header: {
+                    Text("Внешний вид и тема")
+                } footer: {
+                    Text("В системном режиме интерфейс автоматически следует настройкам темы iOS (светлая/темная).")
+                }
+
+                // MARK: - Section 3: History & Archive
+                Section {
                     NavigationLink {
                         ArchiveHistoryView(store: store)
                     } label: {
                         HStack {
-                            Label("Архив семестров", systemImage: "clock.arrow.circlepath")
+                            Label("Архив прошлых семестров", systemImage: "clock.arrow.circlepath")
                             Spacer()
                             Text("\(store.archivedSemesters.count)")
-                                .foregroundColor(.white.opacity(0.4))
+                                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                                .foregroundColor(.secondary)
                         }
                     }
+                } header: {
+                    Text("История")
                 }
 
-                // MARK: - Section: Backup & JSON Export/Import
-                Section("Резервная копия (JSON)") {
+                // MARK: - Section 4: Data & Backup
+                Section {
                     Button {
                         let backup = AppBackupData(
                             semesters: store.semesters,
@@ -129,42 +170,20 @@ public struct SettingsHubView: View {
                             HapticManager.shared.touchGlass()
                         }
                     } label: {
-                        Label("Экспорт базы данных (JSON)", systemImage: "square.and.arrow.up")
+                        HStack {
+                            Label("Экспорт базы данных (JSON)", systemImage: "square.and.arrow.up")
+                            Spacer()
+                            Text("\(store.activeTasks.count) заданий")
+                                .font(.system(size: 12))
+                                .foregroundColor(.secondary)
+                        }
                     }
 
                     Button {
                         showDocumentPicker = true
                         HapticManager.shared.touchGlass()
                     } label: {
-                        Label("Импорт базы данных (JSON)", systemImage: "square.and.arrow.down")
-                    }
-                }
-
-                // MARK: - Section: Theme & Appearance
-                Section("Оформление Liquid Glass") {
-                    Picker("Цветовая тема", selection: $store.theme.preset) {
-                        ForEach(LiquidThemePreset.allCases) { preset in
-                            Text(preset.rawValue).tag(preset)
-                        }
-                    }
-                    .onChange(of: store.theme.preset) {
-                        store.persist()
-                    }
-
-                    Toggle("Тактильный отклик (Haptics)", isOn: $store.theme.enableHaptics)
-                        .onChange(of: store.theme.enableHaptics) {
-                            store.persist()
-                        }
-                }
-
-                // MARK: - Section: Database Management
-                Section("База данных") {
-                    Button {
-                        store.loadSampleData()
-                        dismiss()
-                    } label: {
-                        Label("Загрузить демонстрационные данные", systemImage: "arrow.counterclockwise")
-                            .foregroundColor(.yellow)
+                        Label("Импорт из JSON файла", systemImage: "square.and.arrow.down")
                     }
 
                     Button(role: .destructive) {
@@ -173,22 +192,28 @@ public struct SettingsHubView: View {
                         Label("Очистить все данные", systemImage: "trash")
                             .foregroundColor(.red)
                     }
+                } header: {
+                    Text("Данные и резервные копии")
+                } footer: {
+                    Text("Экспортируйте JSON для сохранения резервной копии перед обновлением или переноса на другое устройство.")
                 }
 
-                // MARK: - Section: App Info
+                // MARK: - Section 5: App Information
                 Section {
-                    HStack {
-                        Spacer()
-                        VStack(spacing: 4) {
-                            Text("UnicTracker • Liquid Glass")
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundColor(.white.opacity(0.6))
-                            Text("Локальное хранилище данных")
-                                .font(.system(size: 10))
-                                .foregroundColor(.white.opacity(0.35))
+                    HStack(spacing: 14) {
+                        Image(systemName: "graduationcap.circle.fill")
+                            .font(.system(size: 34))
+                            .foregroundColor(.cyan)
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("UnicTracker")
+                                .font(.system(size: 15, weight: .bold, design: .rounded))
+                            Text("Версия 2.1 • Автономное локальное хранилище")
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
                         }
-                        Spacer()
                     }
+                    .padding(.vertical, 4)
                 }
             }
             .navigationTitle("Настройки")
@@ -204,9 +229,6 @@ public struct SettingsHubView: View {
             }
             .sheet(isPresented: $showSemesterEdit) {
                 SemesterEditView(store: store)
-            }
-            .sheet(isPresented: $showSubjectEdit) {
-                SubjectEditView(store: store, subjectToEdit: selectedSubjectToEdit)
             }
             .sheet(isPresented: $showFinishSemester) {
                 FinishSemesterModal(store: store)

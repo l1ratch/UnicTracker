@@ -1,6 +1,7 @@
 import SwiftUI
 
 public struct MeshGradientBackground: View {
+    @Environment(\.colorScheme) private var colorScheme
     @ObservedObject var store: DataStore
     @State private var animateGlow: Bool = false
 
@@ -8,11 +9,15 @@ public struct MeshGradientBackground: View {
         self.store = store
     }
 
+    private var isDark: Bool {
+        colorScheme == .dark
+    }
+
     public var body: some View {
         ZStack {
-            // Base dark background
+            // Adaptive gradient background
             LinearGradient(
-                colors: store.theme.preset.backgroundColors,
+                colors: store.theme.preset.backgroundColors(isDark: isDark),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
@@ -26,7 +31,7 @@ public struct MeshGradientBackground: View {
 
                     // Orb 1: Primary Accent
                     Circle()
-                        .fill(store.theme.preset.primaryAccent.opacity(0.22))
+                        .fill(store.theme.preset.primaryAccent.opacity(isDark ? 0.22 : 0.12))
                         .frame(width: w * 0.9, height: w * 0.9)
                         .blur(radius: 70)
                         .offset(

@@ -7,12 +7,6 @@ public struct SubjectEditView: View {
     @State private var subject: Subject
     @State private var isNewSubject: Bool
 
-    // Batch generator fields
-    @State private var enableBatchGen: Bool = false
-    @State private var batchCount: Int = 6
-    @State private var batchCategory: TaskCategory = .lab
-    @State private var batchPrefix: String = "Лабораторная работа"
-
     private let availableIcons = [
         "network", "cpu.fill", "memorychip.fill", "cylinder.split.1x2.fill",
         "function", "terminal.fill", "atom", "chart.bar.xaxis",
@@ -150,23 +144,6 @@ public struct SubjectEditView: View {
                     Stepper("Всего практик в плане: \(subject.practicesTotal)", value: $subject.practicesTotal, in: 1...100)
                 }
 
-                // MARK: - Section: Batch Generator (For new subjects)
-                if isNewSubject {
-                    Section("Быстрая генерация практик") {
-                        Toggle("Сгенерировать задания сразу", isOn: $enableBatchGen)
-
-                        if enableBatchGen {
-                            Picker("Тип работ", selection: $batchCategory) {
-                                ForEach(TaskCategory.allCases) { cat in
-                                    Text(cat.rawValue).tag(cat)
-                                }
-                            }
-                            TextField("Префикс", text: $batchPrefix)
-                            Stepper("Количество: \(batchCount)", value: $batchCount, in: 1...30)
-                        }
-                    }
-                }
-
                 // MARK: - Delete Subject Button
                 if !isNewSubject {
                     Section {
@@ -202,15 +179,6 @@ public struct SubjectEditView: View {
             subject.shortCode = String(subject.name.prefix(4)).uppercased()
         }
         store.saveSubject(subject)
-
-        if isNewSubject && enableBatchGen {
-            store.generateBatchTasks(
-                subjectId: subject.id,
-                category: batchCategory,
-                count: batchCount,
-                prefix: batchPrefix
-            )
-        }
 
         HapticManager.shared.notifySuccess()
         dismiss()

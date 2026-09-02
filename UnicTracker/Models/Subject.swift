@@ -137,6 +137,36 @@ public struct Subject: Identifiable, Codable, Equatable {
         self.practicesTotal = practicesTotal
     }
 
+    enum CodingKeys: String, CodingKey {
+        case id, semesterId, name, shortCode, iconName, colorHex
+        case teacherName, roomOrLink, assessmentType, importance
+        case minPointsForAdmission, isAdmittedToExam, notes
+        case lecturesAttended, lecturesTotal, practicesAttended, practicesTotal
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        self.semesterId = try container.decodeIfPresent(UUID.self, forKey: .semesterId) ?? UUID()
+        let rawName = try container.decodeIfPresent(String.self, forKey: .name) ?? "Дисциплина"
+        self.name = rawName
+        let decodedShortCode = try container.decodeIfPresent(String.self, forKey: .shortCode) ?? ""
+        self.shortCode = decodedShortCode.isEmpty ? String(rawName.prefix(4)).uppercased() : decodedShortCode
+        self.iconName = try container.decodeIfPresent(String.self, forKey: .iconName) ?? "book.fill"
+        self.colorHex = try container.decodeIfPresent(String.self, forKey: .colorHex) ?? SubjectColorOption.cyan.rawValue
+        self.teacherName = try container.decodeIfPresent(String.self, forKey: .teacherName) ?? ""
+        self.roomOrLink = try container.decodeIfPresent(String.self, forKey: .roomOrLink) ?? ""
+        self.assessmentType = try container.decodeIfPresent(AssessmentType.self, forKey: .assessmentType) ?? .exam
+        self.importance = try container.decodeIfPresent(SubjectImportance.self, forKey: .importance) ?? .medium
+        self.minPointsForAdmission = try container.decodeIfPresent(Double.self, forKey: .minPointsForAdmission)
+        self.isAdmittedToExam = try container.decodeIfPresent(Bool.self, forKey: .isAdmittedToExam) ?? false
+        self.notes = try container.decodeIfPresent(String.self, forKey: .notes) ?? ""
+        self.lecturesAttended = try container.decodeIfPresent(Int.self, forKey: .lecturesAttended) ?? 0
+        self.lecturesTotal = try container.decodeIfPresent(Int.self, forKey: .lecturesTotal) ?? 16
+        self.practicesAttended = try container.decodeIfPresent(Int.self, forKey: .practicesAttended) ?? 0
+        self.practicesTotal = try container.decodeIfPresent(Int.self, forKey: .practicesTotal) ?? 16
+    }
+
     public var themeColor: Color {
         Color(hex: colorHex)
     }

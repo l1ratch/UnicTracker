@@ -2,12 +2,16 @@ import SwiftUI
 
 public struct SubjectDetailView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @ObservedObject var store: DataStore
     public var subjectId: UUID
 
     @State private var showTaskCreateSheet: Bool = false
     @State private var showSubjectEditSheet: Bool = false
     @State private var selectedTaskForEdit: StudyTask? = nil
+    @State private var taskForFormEdit: StudyTask? = nil
+    @State private var taskToDelete: StudyTask? = nil
+    @State private var showTaskDeleteConfirm: Bool = false
     @State private var showAttendanceEditor: Bool = false
     @State private var expandedTaskIds: Set<UUID> = []
 
@@ -37,7 +41,7 @@ public struct SubjectDetailView: View {
     public var body: some View {
         ZStack {
             LinearGradient(
-                colors: store.theme.preset.backgroundColors,
+                colors: store.theme.preset.backgroundColors(isDark: colorScheme == .dark),
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -101,10 +105,27 @@ public struct SubjectDetailView: View {
         .sheet(item: $selectedTaskForEdit) { task in
             TaskDetailSheet(store: store, task: task)
         }
+        .sheet(item: $taskForFormEdit) { task in
+            TaskEditView(store: store, taskToEdit: task, defaultSubjectId: subjectId)
+        }
         .sheet(isPresented: $showAttendanceEditor) {
             if let sub = subject {
                 AttendanceEditSheet(store: store, subject: sub)
             }
+        }
+        .alert("Удалить задание?", isPresented: $showTaskDeleteConfirm) {
+            Button("Удалить", role: .destructive) {
+                if let task = taskToDelete {
+                    store.deleteTask(task)
+                    HapticManager.shared.notifySuccess()
+                }
+                taskToDelete = nil
+            }
+            Button("Отмена", role: .cancel) {
+                taskToDelete = nil
+            }
+        } message: {
+            Text("Вы уверены, что хотите удалить «\(taskToDelete?.title ?? "задание")»?")
         }
     }
 
@@ -298,23 +319,6 @@ public struct SubjectDetailView: View {
                     .foregroundColor(.white.opacity(0.5))
 
                 Spacer()
-
-                Button {
-                    store.generateBatchTasks(
-                        subjectId: sub.id,
-                        category: .lab,
-                        count: 4,
-                        prefix: "Лабораторная",
-                        priority: .medium
-                    )
-                } label: {
-                    HStack(spacing: 3) {
-                        Image(systemName: "sparkles")
-                        Text("+ 4 лабы")
-                    }
-                    .font(.system(size: 11, weight: .medium, design: .rounded))
-                    .foregroundColor(.cyan.opacity(0.85))
-                }
             }
 
             if subjectTasks.isEmpty {
@@ -322,7 +326,7 @@ public struct SubjectDetailView: View {
                     Text("Заданий по дисциплине пока нет")
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.white.opacity(0.7))
-                    Text("Нажмите «+» вверху для добавления работы или сгенерируйте пачку лаб.")
+                    Text("Нажмите «+» вверху для добавления задания.")
                         .font(.system(size: 11))
                         .foregroundColor(.white.opacity(0.4))
                         .multilineTextAlignment(.center)
@@ -340,9 +344,9 @@ public struct SubjectDetailView: View {
         }
     }
 
-    // MARK: - Detailed Task Row with Inline Subtasks
+    // MARK: - Detailed Task Row with Inline Subtasks & Quick Actions
     private func detailedTaskRow(task: StudyTask) -> some View {
-        return VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 10) {
                 // Checkbox
                 Button {
@@ -389,6 +393,38 @@ public struct SubjectDetailView: View {
                         .font(.system(size: 10, weight: .medium))
                         .foregroundColor(due < Date() && !task.status.isFinished ? .red : .white.opacity(0.4))
                 }
+
+                // Quick Action Menu (Редактировать / Удалить)
+                Menu {
+                    Button {
+                        taskForFormEdit = task
+                        HapticManager.shared.touchGlass()
+                    } label: {
+                        Label("Редактировать", systemImage: "pencil")
+                    }
+
+                    Button {
+                        store.toggleTaskCompletion(task)
+                    } label: {
+                        Label(task.status.isFinished ? "Вернуть в работу" : "Отметить сданным", systemImage: task.status.isFinished ? "arrow.uturn.backward" : "checkmark.circle")
+                    }
+
+                    Divider()
+
+                    Button(role: .destructive) {
+                        taskToDelete = task
+                        showTaskDeleteConfirm = true
+                    } label: {
+                        Label("Удалить", systemImage: "trash")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundColor(.white.opacity(0.4))
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 6)
+                        .contentShape(Rectangle())
+                }
             }
 
             // Inline Subtask checklist
@@ -419,6 +455,29 @@ public struct SubjectDetailView: View {
                 }
                 .padding(.leading, 28)
                 .padding(.top, 2)
+            }
+        }
+        .contextMenu {
+            Button {
+                taskForFormEdit = task
+                HapticManager.shared.touchGlass()
+            } label: {
+                Label("Редактировать", systemImage: "pencil")
+            }
+
+            Button {
+                store.toggleTaskCompletion(task)
+            } label: {
+                Label(task.status.isFinished ? "Вернуть в работу" : "Отметить сданным", systemImage: task.status.isFinished ? "arrow.uturn.backward" : "checkmark.circle")
+            }
+
+            Divider()
+
+            Button(role: .destructive) {
+                taskToDelete = task
+                showTaskDeleteConfirm = true
+            } label: {
+                Label("Удалить", systemImage: "trash")
             }
         }
         .padding(11)

@@ -40,6 +40,12 @@ public final class StorageService {
         documentsDirectory.appendingPathComponent(fileName)
     }
 
+    private var backupURL: URL {
+        documentsDirectory.appendingPathComponent("unic_tracker_database.bak")
+    }
+
+    public private(set) var lastLoadError: String? = nil
+
     private let jsonEncoder: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
@@ -56,21 +62,45 @@ public final class StorageService {
     // MARK: - Save Local
     public func save(data: AppBackupData) throws {
         let rawData = try jsonEncoder.encode(data)
+        
+        // If existing file is valid, create a rolling backup before overwriting
+        if fileManager.fileExists(atPath: fileURL.path) {
+            try? fileManager.removeItem(at: backupURL)
+            try? fileManager.copyItem(at: fileURL, to: backupURL)
+        }
+        
         try rawData.write(to: fileURL, options: [.atomicWrite, .completeFileProtection])
     }
 
     // MARK: - Load Local
     public func load() -> AppBackupData? {
-        guard fileManager.fileExists(atPath: fileURL.path) else {
-            return nil
+        lastLoadError = nil
+        
+        if fileManager.fileExists(atPath: fileURL.path) {
+            do {
+                let data = try Data(contentsOf: fileURL)
+                return try jsonDecoder.decode(AppBackupData.self, from: data)
+            } catch {
+                print("StorageService: Error reading primary database: \(error)")
+                lastLoadError = error.localizedDescription
+            }
         }
-        do {
-            let data = try Data(contentsOf: fileURL)
-            return try jsonDecoder.decode(AppBackupData.self, from: data)
-        } catch {
-            print("StorageService: Error reading database: \(error.localizedDescription)")
-            return nil
+        
+        // Try fallback from backup if primary failed or does not exist
+        if fileManager.fileExists(atPath: backupURL.path) {
+            do {
+                let data = try Data(contentsOf: backupURL)
+                let backup = try jsonDecoder.decode(AppBackupData.self, from: data)
+                print("StorageService: Successfully recovered data from rolling backup!")
+                // Restore primary file from backup
+                try? save(data: backup)
+                return backup
+            } catch {
+                print("StorageService: Error reading backup database: \(error)")
+            }
         }
+        
+        return nil
     }
 
     // MARK: - Export Data to File URL for Share Sheet

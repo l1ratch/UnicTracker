@@ -54,6 +54,30 @@ public struct Semester: Identifiable, Codable, Equatable {
         self.archivedSummary = archivedSummary
     }
 
+    enum CodingKeys: String, CodingKey {
+        case id, title, academicYear, courseNumber, semesterNumber
+        case startDate, endDate, isArchived, archivedAt, archivedSummary
+        case sessionStartDate, sessionEndDate
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        self.title = try container.decodeIfPresent(String.self, forKey: .title) ?? "Семестр"
+        self.academicYear = try container.decodeIfPresent(String.self, forKey: .academicYear) ?? "2026/2027"
+        self.courseNumber = try container.decodeIfPresent(Int.self, forKey: .courseNumber) ?? 1
+        self.semesterNumber = try container.decodeIfPresent(Int.self, forKey: .semesterNumber) ?? 1
+        self.startDate = try container.decodeIfPresent(Date.self, forKey: .startDate) ?? Date()
+        let cal = Calendar.current
+        let defaultEnd = cal.date(byAdding: .month, value: 5, to: Date()) ?? Date()
+        self.endDate = try container.decodeIfPresent(Date.self, forKey: .endDate)
+            ?? container.decodeIfPresent(Date.self, forKey: .sessionEndDate)
+            ?? defaultEnd
+        self.isArchived = try container.decodeIfPresent(Bool.self, forKey: .isArchived) ?? false
+        self.archivedAt = try container.decodeIfPresent(Date.self, forKey: .archivedAt)
+        self.archivedSummary = try container.decodeIfPresent(ArchivedSemesterSummary.self, forKey: .archivedSummary)
+    }
+
     public var daysRemainingToEnd: Int {
         let calendar = Calendar.current
         let components = calendar.dateComponents([.day], from: Date(), to: endDate)

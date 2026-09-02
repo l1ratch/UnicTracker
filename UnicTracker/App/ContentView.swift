@@ -12,7 +12,7 @@ public struct ContentView: View {
                 showSettings = true
             })
         }
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(store.theme.themeMode.colorScheme)
         .sheet(isPresented: $showSettings) {
             SettingsHubView(store: store)
         }

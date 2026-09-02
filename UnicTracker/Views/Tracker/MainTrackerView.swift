@@ -1,12 +1,16 @@
 import SwiftUI
 
 public struct MainTrackerView: View {
+    @Environment(\.colorScheme) private var colorScheme
     @ObservedObject var store: DataStore
     public var onOpenSettings: () -> Void
 
     @State private var showSubjectCreateSheet: Bool = false
     @State private var showTaskCreateSheet: Bool = false
     @State private var selectedSubjectForNewTask: UUID? = nil
+    @State private var taskToEditFromMain: StudyTask? = nil
+    @State private var taskToDeleteFromMain: StudyTask? = nil
+    @State private var showTaskDeleteConfirmFromMain: Bool = false
 
     public init(store: DataStore, onOpenSettings: @escaping () -> Void) {
         self.store = store
@@ -16,7 +20,7 @@ public struct MainTrackerView: View {
     public var body: some View {
         ZStack {
             LinearGradient(
-                colors: store.theme.preset.backgroundColors,
+                colors: store.theme.preset.backgroundColors(isDark: colorScheme == .dark),
                 startPoint: .top,
                 endPoint: .bottom
             )
@@ -55,6 +59,23 @@ public struct MainTrackerView: View {
         }
         .sheet(isPresented: $showTaskCreateSheet) {
             TaskEditView(store: store, defaultSubjectId: selectedSubjectForNewTask)
+        }
+        .sheet(item: $taskToEditFromMain) { task in
+            TaskEditView(store: store, taskToEdit: task, defaultSubjectId: task.subjectId)
+        }
+        .alert("Удалить задание?", isPresented: $showTaskDeleteConfirmFromMain) {
+            Button("Удалить", role: .destructive) {
+                if let task = taskToDeleteFromMain {
+                    store.deleteTask(task)
+                    HapticManager.shared.notifySuccess()
+                }
+                taskToDeleteFromMain = nil
+            }
+            Button("Отмена", role: .cancel) {
+                taskToDeleteFromMain = nil
+            }
+        } message: {
+            Text("Вы уверены, что хотите удалить «\(taskToDeleteFromMain?.title ?? "задание")»?")
         }
     }
 
@@ -273,6 +294,28 @@ public struct MainTrackerView: View {
                                 Spacer()
                             }
                             .padding(.vertical, 1)
+                            .contextMenu {
+                                Button {
+                                    taskToEditFromMain = task
+                                } label: {
+                                    Label("Редактировать", systemImage: "pencil")
+                                }
+
+                                Button {
+                                    store.toggleTaskCompletion(task)
+                                } label: {
+                                    Label(task.status.isFinished ? "Вернуть в работу" : "Отметить выполненным", systemImage: task.status.isFinished ? "arrow.uturn.backward" : "checkmark.circle")
+                                }
+
+                                Divider()
+
+                                Button(role: .destructive) {
+                                    taskToDeleteFromMain = task
+                                    showTaskDeleteConfirmFromMain = true
+                                } label: {
+                                    Label("Удалить", systemImage: "trash")
+                                }
+                            }
                         }
 
                         if subjectTasks.count > 3 {
@@ -303,7 +346,7 @@ public struct MainTrackerView: View {
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.white.opacity(0.7))
 
-            Text("Нажмите «+ Предмет» или откройте меню «...» вверху для загрузки демо-данных.")
+            Text("Нажмите «+ Предмет» вверху для добавления дисциплины.")
                 .font(.system(size: 12))
                 .foregroundColor(.white.opacity(0.4))
                 .multilineTextAlignment(.center)
