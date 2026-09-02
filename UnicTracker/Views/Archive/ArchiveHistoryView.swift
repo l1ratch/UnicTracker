@@ -53,17 +53,6 @@ public struct ArchiveHistoryView: View {
                 }
 
                 Spacer()
-
-                if let gpa = summary?.averageGrade {
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text("Ср. балл")
-                            .font(.system(size: 11))
-                            .foregroundColor(.white.opacity(0.6))
-                        Text(String(format: "%.2f", gpa))
-                            .font(.system(size: 20, weight: .heavy, design: .rounded))
-                            .foregroundColor(.yellow)
-                    }
-                }
             }
 
             Divider().background(Color.white.opacity(0.1))
