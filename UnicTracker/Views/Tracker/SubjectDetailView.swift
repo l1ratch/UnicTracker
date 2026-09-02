@@ -438,3 +438,50 @@ public struct SubjectDetailView: View {
         return df.string(from: date)
     }
 }
+
+// MARK: - Attendance Edit Sheet Modal
+public struct AttendanceEditSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    @ObservedObject var store: DataStore
+    public var subject: Subject
+
+    @State private var lecturesTotal: Int
+    @State private var practicesTotal: Int
+
+    public init(store: DataStore, subject: Subject) {
+        self.store = store
+        self.subject = subject
+        self._lecturesTotal = State(initialValue: subject.lecturesTotal)
+        self._practicesTotal = State(initialValue: subject.practicesTotal)
+    }
+
+    public var body: some View {
+        NavigationStack {
+            Form {
+                Section("Нормы посещаемости") {
+                    Stepper("Всего лекций в плане: \(lecturesTotal)", value: $lecturesTotal, in: 1...100)
+                    Stepper("Всего практик в плане: \(practicesTotal)", value: $practicesTotal, in: 1...100)
+                }
+            }
+            .navigationTitle("Настройка норм")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button("Отмена") { dismiss() }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Сохранить") {
+                        var updated = subject
+                        updated.lecturesTotal = lecturesTotal
+                        updated.practicesTotal = practicesTotal
+                        store.saveSubject(updated)
+                        HapticManager.shared.notifySuccess()
+                        dismiss()
+                    }
+                    .font(.system(size: 16, weight: .bold))
+                }
+            }
+        }
+    }
+}
+

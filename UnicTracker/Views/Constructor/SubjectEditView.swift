@@ -69,11 +69,7 @@ public struct SubjectEditView: View {
                 Section("Уровень важности предмета") {
                     Picker("Важность", selection: $subject.importance) {
                         ForEach(SubjectImportance.allCases) { imp in
-                            HStack {
-                                Circle().fill(imp.color).frame(width: 8, height: 8)
-                                Text(imp.rawValue)
-                            }
-                            .tag(imp)
+                            Text(imp.rawValue).tag(imp)
                         }
                     }
                     .pickerStyle(.segmented)
