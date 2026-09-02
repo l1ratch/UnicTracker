@@ -147,12 +147,12 @@ public struct SettingsHubView: View {
                             Text(preset.rawValue).tag(preset)
                         }
                     }
-                    .onChange(of: store.theme.preset) { _ in
+                    .onChange(of: store.theme.preset) {
                         store.persist()
                     }
 
                     Toggle("Тактильный отклик (Haptics)", isOn: $store.theme.enableHaptics)
-                        .onChange(of: store.theme.enableHaptics) { _ in
+                        .onChange(of: store.theme.enableHaptics) {
                             store.persist()
                         }
                 }
