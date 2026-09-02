@@ -64,6 +64,12 @@ public struct Subject: Identifiable, Codable, Equatable {
     public var isAdmittedToExam: Bool
     public var notes: String
 
+    // Attendance counters (Посещаемость: лекции и практики)
+    public var lecturesAttended: Int
+    public var lecturesTotal: Int
+    public var practicesAttended: Int
+    public var practicesTotal: Int
+
     public init(
         id: UUID = UUID(),
         semesterId: UUID,
@@ -76,7 +82,11 @@ public struct Subject: Identifiable, Codable, Equatable {
         assessmentType: AssessmentType = .exam,
         minPointsForAdmission: Double? = 50.0,
         isAdmittedToExam: Bool = false,
-        notes: String = ""
+        notes: String = "",
+        lecturesAttended: Int = 0,
+        lecturesTotal: Int = 16,
+        practicesAttended: Int = 0,
+        practicesTotal: Int = 16
     ) {
         self.id = id
         self.semesterId = semesterId
@@ -90,6 +100,10 @@ public struct Subject: Identifiable, Codable, Equatable {
         self.minPointsForAdmission = minPointsForAdmission
         self.isAdmittedToExam = isAdmittedToExam
         self.notes = notes
+        self.lecturesAttended = lecturesAttended
+        self.lecturesTotal = lecturesTotal
+        self.practicesAttended = practicesAttended
+        self.practicesTotal = practicesTotal
     }
 
     public var themeColor: Color {

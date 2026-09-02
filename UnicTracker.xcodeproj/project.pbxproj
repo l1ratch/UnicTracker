@@ -36,6 +36,7 @@
 		AA01001B2C8500010000001B /* ArchiveHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02001B2C8500010000001B /* ArchiveHistoryView.swift */; };
 		AA01001C2C8500010000001C /* JSONPreviewSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02001C2C8500010000001C /* JSONPreviewSheet.swift */; };
 		AA01001D2C8500010000001D /* SettingsHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA02001D2C8500010000001D /* SettingsHubView.swift */; };
+		AA0100202C85000100000020 /* SubjectDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0200202C85000100000020 /* SubjectDetailView.swift */; };
 		AA01001E2C8500010000001E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA02001E2C8500010000001E /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -70,6 +71,7 @@
 		AA02001B2C8500010000001B /* ArchiveHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiveHistoryView.swift; sourceTree = "<group>"; };
 		AA02001C2C8500010000001C /* JSONPreviewSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONPreviewSheet.swift; sourceTree = "<group>"; };
 		AA02001D2C8500010000001D /* SettingsHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHubView.swift; sourceTree = "<group>"; };
+		AA0200202C85000100000020 /* SubjectDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubjectDetailView.swift; sourceTree = "<group>"; };
 		AA02001E2C8500010000001E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AA02001F2C8500010000001F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -177,6 +179,7 @@
 				AA0200112C85000100000011 /* TaskRowView.swift */,
 				AA0200122C85000100000012 /* TaskDetailSheet.swift */,
 				AA0200132C85000100000013 /* MainTrackerView.swift */,
+				AA0200202C85000100000020 /* SubjectDetailView.swift */,
 			);
 			path = Tracker;
 			sourceTree = "<group>";
@@ -317,6 +320,7 @@
 				AA01001B2C8500010000001B /* ArchiveHistoryView.swift in Sources */,
 				AA01001C2C8500010000001C /* JSONPreviewSheet.swift in Sources */,
 				AA01001D2C8500010000001D /* SettingsHubView.swift in Sources */,
+				AA0100202C85000100000020 /* SubjectDetailView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -257,6 +257,38 @@ public final class DataStore: ObservableObject {
         persist()
     }
 
+    // MARK: - Attendance Operations
+    public func incrementLectures(for subjectId: UUID) {
+        guard let index = subjects.firstIndex(where: { $0.id == subjectId }) else { return }
+        if subjects[index].lecturesAttended < subjects[index].lecturesTotal {
+            subjects[index].lecturesAttended += 1
+        } else {
+            subjects[index].lecturesAttended = 0
+        }
+        HapticManager.shared.touchGlass()
+        persist()
+    }
+
+    public func incrementPractices(for subjectId: UUID) {
+        guard let index = subjects.firstIndex(where: { $0.id == subjectId }) else { return }
+        if subjects[index].practicesAttended < subjects[index].practicesTotal {
+            subjects[index].practicesAttended += 1
+        } else {
+            subjects[index].practicesAttended = 0
+        }
+        HapticManager.shared.touchGlass()
+        persist()
+    }
+
+    public func updateAttendance(for subjectId: UUID, lecturesAttended: Int, lecturesTotal: Int, practicesAttended: Int, practicesTotal: Int) {
+        guard let index = subjects.firstIndex(where: { $0.id == subjectId }) else { return }
+        subjects[index].lecturesAttended = max(0, lecturesAttended)
+        subjects[index].lecturesTotal = max(1, lecturesTotal)
+        subjects[index].practicesAttended = max(0, practicesAttended)
+        subjects[index].practicesTotal = max(1, practicesTotal)
+        persist()
+    }
+
     // MARK: - Semester Lifecycle & Archiving
     public func createSemester(title: String, course: Int, semesterNumber: Int, startDate: Date, endDate: Date, sessionStart: Date?) {
         let newSem = Semester(
