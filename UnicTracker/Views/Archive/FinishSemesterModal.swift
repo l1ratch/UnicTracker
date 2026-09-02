@@ -148,15 +148,12 @@ public struct FinishSemesterModal: View {
             let cal = Calendar.current
             let now = Date()
             let newEnd = cal.date(byAdding: .month, value: 5, to: now) ?? now
-            let newSession = cal.date(byAdding: .month, value: 4, to: now)
-
             store.createSemester(
                 title: nextSemesterTitle.isEmpty ? "Семестр \(nextNum)" : nextSemesterTitle,
                 course: nextCourse,
                 semesterNumber: nextNum,
                 startDate: now,
-                endDate: newEnd,
-                sessionStart: newSession
+                endDate: newEnd
             )
         }
 

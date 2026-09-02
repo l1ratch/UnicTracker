@@ -14,8 +14,8 @@ public struct SubjectEditView: View {
     @State private var batchPrefix: String = "Лабораторная работа"
 
     private let availableIcons = [
-        "cpu.fill", "memorychip.fill", "cylinder.split.1x2.fill", "function",
-        "terminal.fill", "network", "atom", "chart.bar.xaxis",
+        "network", "cpu.fill", "memorychip.fill", "cylinder.split.1x2.fill",
+        "function", "terminal.fill", "atom", "chart.bar.xaxis",
         "book.fill", "graduationcap.fill", "shield.lefthalf.filled", "globe"
     ]
 
@@ -30,232 +30,168 @@ public struct SubjectEditView: View {
                 semesterId: activeSemId,
                 name: "",
                 shortCode: "",
-                iconName: "book.fill",
+                iconName: "network",
                 colorHex: SubjectColorOption.cyan.rawValue,
-                assessmentType: .exam
+                assessmentType: .exam,
+                importance: .medium
             ))
             self._isNewSubject = State(initialValue: true)
         }
     }
 
     public var body: some View {
-        NavigationView {
-            ZStack {
-                MeshGradientBackground(store: store)
+        NavigationStack {
+            Form {
+                // MARK: - Section: Names (Short Code & Full Name)
+                Section("Название и краткий код") {
+                    HStack {
+                        Text("Код:")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.cyan)
 
-                ScrollView {
-                    VStack(spacing: 20) {
-                        // Main Info Card
-                        VStack(alignment: .leading, spacing: 14) {
-                            Text("ДИСЦИПЛИНА")
-                                .font(.system(size: 12, weight: .bold, design: .rounded))
-                                .foregroundColor(.white.opacity(0.5))
+                        TextField("КС, ОС, БД...", text: $subject.shortCode)
+                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .textInputAutocapitalization(.characters)
+                            .frame(maxWidth: 120)
 
-                            TextField("Название (напр. Компьютерные сети)", text: $subject.name)
-                                .font(.system(size: 16, weight: .semibold, design: .rounded))
-                                .foregroundColor(.white)
-                                .padding(12)
-                                .background(RoundedRectangle(cornerRadius: 12).fill(Color.white.opacity(0.06)))
+                        Spacer()
 
+                        Text("Отображается на карточке")
+                            .font(.system(size: 11))
+                            .foregroundColor(.white.opacity(0.4))
+                    }
+
+                    TextField("Полное название предмета (Компьютерные сети)", text: $subject.name)
+                        .font(.system(size: 14))
+                }
+
+                // MARK: - Section: Importance Level (Уровень важности)
+                Section("Уровень важности предмета") {
+                    Picker("Важность", selection: $subject.importance) {
+                        ForEach(SubjectImportance.allCases) { imp in
                             HStack {
-                                TextField("Код (КС)", text: $subject.shortCode)
-                                    .font(.system(size: 14, weight: .bold, design: .rounded))
-                                    .foregroundColor(.white)
-                                    .padding(10)
-                                    .frame(width: 90)
-                                    .background(RoundedRectangle(cornerRadius: 10).fill(Color.white.opacity(0.06)))
-
-                                Spacer()
-
-                                Text("Краткий тег на карточке")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.white.opacity(0.5))
+                                Circle().fill(imp.color).frame(width: 8, height: 8)
+                                Text(imp.rawValue)
                             }
+                            .tag(imp)
                         }
-                        .padding(18)
-                        .liquidGlass(cornerRadius: 22, depth: store.theme.glassDepth, tint: subject.themeColor)
+                    }
+                    .pickerStyle(.segmented)
 
-                        // Icon and Color Customization Card
-                        VStack(alignment: .leading, spacing: 14) {
-                            Text("СТИЛЬ И ИКОНКА")
-                                .font(.system(size: 12, weight: .bold, design: .rounded))
-                                .foregroundColor(.white.opacity(0.5))
+                    HStack(spacing: 6) {
+                        Circle()
+                            .fill(subject.importance.color)
+                            .frame(width: 8, height: 8)
+                        Text("Предметы с более высокой важностью показываются первыми в списке.")
+                            .font(.system(size: 12))
+                            .foregroundColor(.white.opacity(0.55))
+                    }
+                }
 
-                            // Color Picker
-                            HStack(spacing: 10) {
-                                ForEach(SubjectColorOption.allCases) { opt in
-                                    let isSelected = subject.colorHex == opt.rawValue
-                                    Button {
-                                        subject.colorHex = opt.rawValue
-                                        HapticManager.shared.touchGlass()
-                                    } label: {
-                                        Circle()
-                                            .fill(opt.color)
-                                            .frame(width: 32, height: 32)
-                                            .overlay(
-                                                Circle().stroke(Color.white, lineWidth: isSelected ? 2.5 : 0)
-                                            )
-                                            .shadow(color: opt.color.opacity(isSelected ? 0.8 : 0.2), radius: 6)
-                                    }
-                                }
-                            }
-
-                            Divider().background(Color.white.opacity(0.1))
-
-                            // Icon Picker Grid
-                            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 6), spacing: 10) {
-                                ForEach(availableIcons, id: \.self) { icon in
-                                    let isSelected = subject.iconName == icon
-                                    Button {
-                                        subject.iconName = icon
-                                        HapticManager.shared.touchGlass()
-                                    } label: {
-                                        Image(systemName: icon)
-                                            .font(.system(size: 18))
-                                            .foregroundColor(isSelected ? .white : .white.opacity(0.6))
-                                            .frame(width: 44, height: 44)
-                                            .background(
-                                                RoundedRectangle(cornerRadius: 10)
-                                                    .fill(isSelected ? subject.themeColor.opacity(0.4) : Color.white.opacity(0.06))
-                                                    .overlay(
-                                                        RoundedRectangle(cornerRadius: 10)
-                                                            .strokeBorder(isSelected ? subject.themeColor : Color.clear, lineWidth: 1)
-                                                    )
-                                            )
-                                    }
-                                }
-                            }
-                        }
-                        .padding(18)
-                        .liquidGlass(cornerRadius: 22, depth: store.theme.glassDepth)
-
-                        // Assessment Type Card
-                        VStack(alignment: .leading, spacing: 14) {
-                            Text("ФОРМА ИТОГОВОГО КОНТРОЛЯ")
-                                .font(.system(size: 12, weight: .bold, design: .rounded))
-                                .foregroundColor(.white.opacity(0.5))
-
-                            ForEach(AssessmentType.allCases) { type in
-                                let isSelected = subject.assessmentType == type
+                // MARK: - Section: Color & Icon
+                Section("Цвет и иконка") {
+                    // Color Palette
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(SubjectColorOption.allCases) { opt in
+                                let isSelected = subject.colorHex == opt.rawValue
                                 Button {
-                                    subject.assessmentType = type
+                                    subject.colorHex = opt.rawValue
                                     HapticManager.shared.touchGlass()
                                 } label: {
-                                    HStack {
-                                        Image(systemName: type.iconName)
-                                            .foregroundColor(type.badgeColor)
-                                            .frame(width: 24)
-
-                                        Text(type.rawValue)
-                                            .font(.system(size: 14, weight: .semibold, design: .rounded))
-                                            .foregroundColor(isSelected ? .white : .white.opacity(0.8))
-
-                                        Spacer()
-
-                                        if isSelected {
-                                            Image(systemName: "checkmark.circle.fill")
-                                                .foregroundColor(.cyan)
-                                        }
-                                    }
-                                    .padding(12)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(isSelected ? Color.white.opacity(0.12) : Color.white.opacity(0.04))
-                                    )
+                                    Circle()
+                                        .fill(opt.color)
+                                        .frame(width: 28, height: 28)
+                                        .overlay(
+                                            Circle().stroke(Color.white, lineWidth: isSelected ? 2.5 : 0)
+                                        )
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
                         }
-                        .padding(18)
-                        .liquidGlass(cornerRadius: 22, depth: store.theme.glassDepth)
-
-                        // Teacher & Details
-                        VStack(alignment: .leading, spacing: 14) {
-                            Text("ПРЕПОДАВАТЕЛЬ И АУДИТОРИЯ")
-                                .font(.system(size: 12, weight: .bold, design: .rounded))
-                                .foregroundColor(.white.opacity(0.5))
-
-                            TextField("ФИО преподавателя", text: $subject.teacherName)
-                                .font(.system(size: 14))
-                                .foregroundColor(.white)
-                                .padding(12)
-                                .background(RoundedRectangle(cornerRadius: 12).fill(Color.white.opacity(0.06)))
-
-                            TextField("Аудитория или ссылка на Zoom/LMS", text: $subject.roomOrLink)
-                                .font(.system(size: 14))
-                                .foregroundColor(.white)
-                                .padding(12)
-                                .background(RoundedRectangle(cornerRadius: 12).fill(Color.white.opacity(0.06)))
-                        }
-                        .padding(18)
-                        .liquidGlass(cornerRadius: 22, depth: store.theme.glassDepth)
-
-                        // 1-Click Batch Task Generator (Available on creation)
-                        if isNewSubject {
-                            VStack(alignment: .leading, spacing: 14) {
-                                Toggle("Сгенерировать задания сразу", isOn: $enableBatchGen)
-                                    .font(.system(size: 15, weight: .semibold, design: .rounded))
-                                    .foregroundColor(.white)
-
-                                if enableBatchGen {
-                                    Divider().background(Color.white.opacity(0.1))
-
-                                    Picker("Тип работ", selection: $batchCategory) {
-                                        ForEach(TaskCategory.allCases) { cat in
-                                            Text(cat.rawValue).tag(cat)
-                                        }
-                                    }
-                                    .pickerStyle(MenuPickerStyle())
-                                    .accentColor(.cyan)
-
-                                    TextField("Префикс названия", text: $batchPrefix)
-                                        .foregroundColor(.white)
-                                        .padding(10)
-                                        .background(RoundedRectangle(cornerRadius: 10).fill(Color.white.opacity(0.06)))
-
-                                    Stepper("Количество: \(batchCount)", value: $batchCount, in: 1...30)
-                                        .foregroundColor(.white)
-                                }
-                            }
-                            .padding(18)
-                            .liquidGlass(cornerRadius: 22, depth: store.theme.glassDepth, tint: Color.cyan)
-                        }
-
-                        // Delete Subject Button
-                        if !isNewSubject {
-                            Button {
-                                store.deleteSubject(subject)
-                                dismiss()
-                            } label: {
-                                HStack {
-                                    Image(systemName: "trash.fill")
-                                    Text("Удалить дисциплину")
-                                }
-                                .font(.system(size: 15, weight: .semibold, design: .rounded))
-                                .foregroundColor(.red)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 14)
-                            }
-                            .buttonStyle(GlassButtonStyle(tint: Color.red.opacity(0.3), cornerRadius: 18))
-                            .padding(.top, 10)
-                        }
-
-                        Spacer(minLength: 20)
+                        .padding(.vertical, 4)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 16)
+
+                    // Icon Grid
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            ForEach(availableIcons, id: \.self) { icon in
+                                let isSelected = subject.iconName == icon
+                                Button {
+                                    subject.iconName = icon
+                                    HapticManager.shared.touchGlass()
+                                } label: {
+                                    Image(systemName: icon)
+                                        .font(.system(size: 16))
+                                        .foregroundColor(isSelected ? .white : .white.opacity(0.6))
+                                        .frame(width: 36, height: 36)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 8)
+                                                .fill(isSelected ? subject.themeColor.opacity(0.4) : Color.white.opacity(0.06))
+                                        )
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                            }
+                        }
+                        .padding(.vertical, 4)
+                    }
+                }
+
+                // MARK: - Section: Teacher & Room
+                Section("Преподаватель и аудитория") {
+                    TextField("ФИО преподавателя", text: $subject.teacherName)
+                    TextField("Аудитория или ссылка", text: $subject.roomOrLink)
+                    Picker("Форма контроля", selection: $subject.assessmentType) {
+                        ForEach(AssessmentType.allCases) { type in
+                            Text(type.rawValue).tag(type)
+                        }
+                    }
+                }
+
+                // MARK: - Section: Attendance Norms
+                Section("Нормы посещаемости") {
+                    Stepper("Всего лекций в плане: \(subject.lecturesTotal)", value: $subject.lecturesTotal, in: 1...100)
+                    Stepper("Всего практик в плане: \(subject.practicesTotal)", value: $subject.practicesTotal, in: 1...100)
+                }
+
+                // MARK: - Section: Batch Generator (For new subjects)
+                if isNewSubject {
+                    Section("Быстрая генерация практик") {
+                        Toggle("Сгенерировать задания сразу", isOn: $enableBatchGen)
+
+                        if enableBatchGen {
+                            Picker("Тип работ", selection: $batchCategory) {
+                                ForEach(TaskCategory.allCases) { cat in
+                                    Text(cat.rawValue).tag(cat)
+                                }
+                            }
+                            TextField("Префикс", text: $batchPrefix)
+                            Stepper("Количество: \(batchCount)", value: $batchCount, in: 1...30)
+                        }
+                    }
+                }
+
+                // MARK: - Delete Subject Button
+                if !isNewSubject {
+                    Section {
+                        Button(role: .destructive) {
+                            store.deleteSubject(subject)
+                            dismiss()
+                        } label: {
+                            Label("Удалить предмет", systemImage: "trash")
+                        }
+                    }
                 }
             }
-            .navigationTitle(isNewSubject ? "Новая дисциплина" : "Редактировать предмет")
+            .navigationTitle(isNewSubject ? "Новый предмет" : "Редактировать предмет")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Отмена") { dismiss() }
-                        .foregroundColor(.white.opacity(0.7))
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Сохранить") {
-                        saveAndProceed()
+                        saveSubjectAndProceed()
                     }
                     .font(.system(size: 16, weight: .bold))
                     .foregroundColor(subject.name.trimmingCharacters(in: .whitespaces).isEmpty ? .white.opacity(0.3) : .cyan)
@@ -265,8 +201,8 @@ public struct SubjectEditView: View {
         }
     }
 
-    private func saveAndProceed() {
-        if subject.shortCode.isEmpty {
+    private func saveSubjectAndProceed() {
+        if subject.shortCode.trimmingCharacters(in: .whitespaces).isEmpty {
             subject.shortCode = String(subject.name.prefix(4)).uppercased()
         }
         store.saveSubject(subject)

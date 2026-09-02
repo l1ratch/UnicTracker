@@ -72,20 +72,14 @@ public struct ArchiveHistoryView: View {
             HStack(spacing: 10) {
                 archiveStatPill(
                     icon: "checklist",
-                    label: "Заданий",
+                    label: "Сдано работ",
                     value: "\(summary?.completedTasksCount ?? 0)/\(summary?.totalTasksCount ?? 0)"
                 )
 
                 archiveStatPill(
-                    icon: "graduationcap.fill",
-                    label: "Экзамены",
-                    value: "\(summary?.passedExamsCount ?? 0)/\(summary?.totalExamsCount ?? 0)"
-                )
-
-                archiveStatPill(
-                    icon: "checkmark.seal.fill",
-                    label: "Зачеты",
-                    value: "\(summary?.passedTestsCount ?? 0)/\(summary?.totalTestsCount ?? 0)"
+                    icon: "books.vertical.fill",
+                    label: "Дисциплин",
+                    value: "\(semSubjects.count)"
                 )
             }
 

@@ -58,19 +58,27 @@ public struct SettingsHubView: View {
                                 HapticManager.shared.touchGlass()
                             } label: {
                                 HStack(spacing: 8) {
-                                    Circle()
-                                        .fill(subject.themeColor)
-                                        .frame(width: 8, height: 8)
+                                    Text(subject.shortCode)
+                                        .font(.system(size: 11, weight: .bold))
+                                        .foregroundColor(subject.themeColor)
+                                        .padding(.horizontal, 5)
+                                        .padding(.vertical, 2)
+                                        .background(RoundedRectangle(cornerRadius: 4).fill(subject.themeColor.opacity(0.18)))
 
                                     Text(subject.name)
                                         .font(.system(size: 14))
                                         .foregroundColor(.white)
+                                        .lineLimit(1)
 
                                     Spacer()
 
-                                    Text(subject.assessmentType.rawValue)
-                                        .font(.system(size: 11))
-                                        .foregroundColor(.white.opacity(0.45))
+                                    Circle()
+                                        .fill(subject.importance.color)
+                                        .frame(width: 6, height: 6)
+
+                                    Text(subject.importance.rawValue)
+                                        .font(.system(size: 10, weight: .medium))
+                                        .foregroundColor(subject.importance.color)
                                 }
                             }
                         }
@@ -82,8 +90,8 @@ public struct SettingsHubView: View {
                     }
                 }
 
-                // MARK: - Section: Session & Archive Lifecycle
-                Section("Управление сессией и архив") {
+                // MARK: - Section: Archive Lifecycle
+                Section("Завершение семестра и архив") {
                     Button {
                         showFinishSemester = true
                         HapticManager.shared.touchGlass()

@@ -42,7 +42,14 @@ public final class DataStore: ObservableObject {
 
     public var activeSubjects: [Subject] {
         guard let activeSem = activeSemester else { return [] }
-        return subjects.filter { $0.semesterId == activeSem.id }
+        return subjects
+            .filter { $0.semesterId == activeSem.id }
+            .sorted {
+                if $0.importance.order != $1.importance.order {
+                    return $0.importance.order < $1.importance.order
+                }
+                return $0.name < $1.name
+            }
     }
 
     public var activeTasks: [StudyTask] {
@@ -290,7 +297,7 @@ public final class DataStore: ObservableObject {
     }
 
     // MARK: - Semester Lifecycle & Archiving
-    public func createSemester(title: String, course: Int, semesterNumber: Int, startDate: Date, endDate: Date, sessionStart: Date?) {
+    public func createSemester(title: String, course: Int, semesterNumber: Int, startDate: Date, endDate: Date) {
         let newSem = Semester(
             title: title,
             academicYear: "\(Calendar.current.component(.year, from: startDate))/\(Calendar.current.component(.year, from: startDate) + 1)",
@@ -298,8 +305,6 @@ public final class DataStore: ObservableObject {
             semesterNumber: semesterNumber,
             startDate: startDate,
             endDate: endDate,
-            sessionStartDate: sessionStart,
-            sessionEndDate: endDate,
             isArchived: false
         )
         semesters.append(newSem)
@@ -310,49 +315,14 @@ public final class DataStore: ObservableObject {
         guard let current = activeSemester,
               let index = semesters.firstIndex(where: { $0.id == current.id }) else { return }
 
-        // Compute summary
         let activeSubs = activeSubjects
         let activeSubIds = Set(activeSubs.map { $0.id })
         let currentTasks = tasks.filter { activeSubIds.contains($0.subjectId) }
-        let currentSession = sessionItems.filter { activeSubIds.contains($0.subjectId) }
-
         let completedTasks = currentTasks.filter { $0.status.isFinished }.count
-        let exams = activeSubs.filter { $0.assessmentType == .exam }
-        let tests = activeSubs.filter { $0.assessmentType == .test || $0.assessmentType == .diffTest }
-
-        var passedExams = 0
-        var totalGradeSum = 0
-        var gradedCount = 0
-
-        for exam in exams {
-            if let item = currentSession.first(where: { $0.subjectId == exam.id }), let g = item.grade {
-                if g != .unsatisfactory {
-                    passedExams += 1
-                }
-                totalGradeSum += g.rawValue
-                gradedCount += 1
-            }
-        }
-
-        var passedTests = 0
-        for test in tests {
-            if let item = currentSession.first(where: { $0.subjectId == test.id }) {
-                if item.testResult == .passed {
-                    passedTests += 1
-                }
-            }
-        }
-
-        let avgGrade = gradedCount > 0 ? (Double(totalGradeSum) / Double(gradedCount)) : nil
 
         let summary = ArchivedSemesterSummary(
             completedTasksCount: completedTasks,
             totalTasksCount: currentTasks.count,
-            passedExamsCount: passedExams,
-            totalExamsCount: exams.count,
-            passedTestsCount: passedTests,
-            totalTestsCount: tests.count,
-            averageGrade: avgGrade,
             archiveNote: notes
         )
 
@@ -411,7 +381,6 @@ public final class DataStore: ObservableObject {
         let semId = UUID()
         let now = Date()
         let endSem = Calendar.current.date(byAdding: .month, value: 4, to: now) ?? now
-        let sessionStart = Calendar.current.date(byAdding: .month, value: 3, to: now) ?? now
 
         let sem = Semester(
             id: semId,
@@ -421,48 +390,55 @@ public final class DataStore: ObservableObject {
             semesterNumber: 5,
             startDate: now,
             endDate: endSem,
-            sessionStartDate: sessionStart,
-            sessionEndDate: endSem,
             isArchived: false
         )
 
         let sub1 = Subject(
             semesterId: semId,
-            name: "Операционные системы",
-            shortCode: "ОС",
-            iconName: "cpu.fill",
+            name: "Компьютерные сети",
+            shortCode: "КС",
+            iconName: "network",
             colorHex: SubjectColorOption.cyan.rawValue,
             teacherName: "Иванов А.С.",
-            roomOrLink: "Ауд. 402 / Zoom",
+            roomOrLink: "Ауд. 402",
             assessmentType: .exam,
-            minPointsForAdmission: 60.0,
-            isAdmittedToExam: true
+            importance: .critical,
+            lecturesAttended: 6,
+            lecturesTotal: 16,
+            practicesAttended: 4,
+            practicesTotal: 12
         )
 
         let sub2 = Subject(
             semesterId: semId,
-            name: "Базы данных и SQL",
-            shortCode: "БД",
-            iconName: "cylinder.split.1x2.fill",
+            name: "Операционные системы",
+            shortCode: "ОС",
+            iconName: "cpu.fill",
             colorHex: SubjectColorOption.purple.rawValue,
             teacherName: "Петрова Е.В.",
             roomOrLink: "Ауд. 310",
             assessmentType: .diffTest,
-            minPointsForAdmission: 50.0,
-            isAdmittedToExam: false
+            importance: .high,
+            lecturesAttended: 8,
+            lecturesTotal: 16,
+            practicesAttended: 7,
+            practicesTotal: 10
         )
 
         let sub3 = Subject(
             semesterId: semId,
-            name: "Архитектура ЭВМ",
-            shortCode: "АЭВМ",
-            iconName: "memorychip.fill",
+            name: "Базы данных и SQL",
+            shortCode: "БД",
+            iconName: "cylinder.split.1x2.fill",
             colorHex: SubjectColorOption.emerald.rawValue,
             teacherName: "Сидоров К.М.",
             roomOrLink: "Лаб. 104",
             assessmentType: .exam,
-            minPointsForAdmission: 55.0,
-            isAdmittedToExam: false
+            importance: .medium,
+            lecturesAttended: 5,
+            lecturesTotal: 14,
+            practicesAttended: 3,
+            practicesTotal: 8
         )
 
         let sampleSubjects = [sub1, sub2, sub3]

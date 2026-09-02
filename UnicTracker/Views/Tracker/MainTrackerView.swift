@@ -23,17 +23,12 @@ public struct MainTrackerView: View {
             .ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
-                VStack(spacing: 16) {
-                    // MARK: - Top Summary Mini Bar
+                VStack(spacing: 14) {
+                    // MARK: - Top Summary Mini Bar (Semester Progress & End Countdown)
                     compactTopSummary
 
-                    // MARK: - Section 1: Subject Cards List (Main Focus)
+                    // MARK: - Subject Cards List (Sorted by Importance)
                     subjectCardsSection
-
-                    // MARK: - Section 2: Session & Inline Exams (at bottom of same screen)
-                    if !store.activeSubjects.isEmpty {
-                        sessionGradingSection
-                    }
 
                     Spacer(minLength: 30)
                 }
@@ -49,9 +44,9 @@ public struct MainTrackerView: View {
                     HapticManager.shared.touchGlass()
                     onOpenSettings()
                 } label: {
-                    Image(systemName: "gearshape.fill")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.85))
+                    Image(systemName: "ellipsis.circle.fill")
+                        .font(.system(size: 19, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.9))
                 }
             }
         }
@@ -65,11 +60,11 @@ public struct MainTrackerView: View {
 
     // MARK: - Compact Top Summary Bar
     private var compactTopSummary: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 12) {
             // Overall Progress Bar & Percentage
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
-                    Text("Общий прогресс")
+                    Text("Общий прогресс сдачи")
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(.white.opacity(0.6))
                     Spacer()
@@ -96,18 +91,18 @@ public struct MainTrackerView: View {
                 .frame(height: 24)
                 .background(Color.white.opacity(0.15))
 
-            // Countdown to Session
+            // Countdown to End of Semester
             if let sem = store.activeSemester {
                 HStack(spacing: 6) {
-                    Image(systemName: "timer")
+                    Image(systemName: "clock.badge.checkmark")
                         .font(.system(size: 13))
                         .foregroundColor(.cyan)
 
                     VStack(alignment: .leading, spacing: 1) {
-                        Text("До сессии")
+                        Text("До конца")
                             .font(.system(size: 10, weight: .medium))
                             .foregroundColor(.white.opacity(0.5))
-                        Text("\(sem.daysRemainingToSession) дн.")
+                        Text("\(sem.daysRemainingToEnd) дн.")
                             .font(.system(size: 13, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
                     }
@@ -126,7 +121,7 @@ public struct MainTrackerView: View {
         )
     }
 
-    // MARK: - Section 1: Subject Cards List
+    // MARK: - Section: Subject Cards List (Prioritized by Importance)
     private var subjectCardsSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
@@ -160,7 +155,7 @@ public struct MainTrackerView: View {
         }
     }
 
-    // MARK: - Single Subject Card (Tappable -> SubjectDetailView)
+    // MARK: - Single Subject Card (Short Code prominent + Importance + Inline Tasks)
     private func subjectCard(subject: Subject) -> some View {
         let subjectTasks = store.tasks.filter { $0.subjectId == subject.id }
         let completedCount = subjectTasks.filter { $0.status.isFinished }.count
@@ -170,29 +165,51 @@ public struct MainTrackerView: View {
             SubjectDetailView(store: store, subjectId: subject.id)
         } label: {
             VStack(alignment: .leading, spacing: 9) {
-                // Header: Color icon + Title + Type badge + Arrow
+                // Top Row: Short Code Badge (Large/Bold) + Full Name + Importance Badge
                 HStack(spacing: 8) {
-                    Circle()
-                        .fill(subject.themeColor)
-                        .frame(width: 8, height: 8)
+                    // Short Code Tag
+                    Text(subject.shortCode)
+                        .font(.system(size: 13, weight: .heavy, design: .rounded))
+                        .foregroundColor(subject.themeColor)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .fill(subject.themeColor.opacity(0.18))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                        .strokeBorder(subject.themeColor.opacity(0.4), lineWidth: 0.8)
+                                )
+                        )
 
+                    // Full Subject Name
                     Text(subject.name)
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
                         .foregroundColor(.white)
                         .lineLimit(1)
 
-                    Text(subject.assessmentType.rawValue)
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundColor(subject.assessmentType.badgeColor)
-                        .padding(.horizontal, 6)
-                        .padding(.vertical, 2)
-                        .background(Capsule().fill(subject.assessmentType.badgeColor.opacity(0.15)))
-
                     Spacer()
 
+                    // Importance Badge (🔴 🟠 🟡 🟢)
+                    HStack(spacing: 4) {
+                        Circle()
+                            .fill(subject.importance.color)
+                            .frame(width: 6, height: 6)
+
+                        Text(subject.importance.rawValue)
+                            .font(.system(size: 10, weight: .semibold, design: .rounded))
+                            .foregroundColor(subject.importance.color)
+                    }
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 3)
+                    .background(
+                        Capsule()
+                            .fill(subject.importance.color.opacity(0.12))
+                    )
+
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(.white.opacity(0.35))
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.3))
                 }
 
                 // Thin Progress Bar
@@ -209,20 +226,20 @@ public struct MainTrackerView: View {
                 .frame(height: 4)
 
                 // Quick stats: Practices done + Attendance summary
-                HStack(spacing: 12) {
+                HStack(spacing: 10) {
                     Text("Практик: \(completedCount)/\(subjectTasks.count)")
                         .font(.system(size: 11, weight: .semibold, design: .rounded))
                         .foregroundColor(.white.opacity(0.75))
 
                     Text("•")
-                        .foregroundColor(.white.opacity(0.3))
+                        .foregroundColor(.white.opacity(0.25))
 
                     Text("Лекции: \(subject.lecturesAttended)/\(subject.lecturesTotal)")
                         .font(.system(size: 11, weight: .medium))
                         .foregroundColor(.blue.opacity(0.9))
 
                     Text("•")
-                        .foregroundColor(.white.opacity(0.3))
+                        .foregroundColor(.white.opacity(0.25))
 
                     Text("Практики: \(subject.practicesAttended)/\(subject.practicesTotal)")
                         .font(.system(size: 11, weight: .medium))
@@ -231,7 +248,7 @@ public struct MainTrackerView: View {
                     Spacer()
                 }
 
-                // Inline tasks preview (first 2-3 tasks with direct checkmarks)
+                // Inline tasks preview (first 3 tasks with direct checkmark toggles)
                 if !subjectTasks.isEmpty {
                     Divider().background(Color.white.opacity(0.06))
 
@@ -280,128 +297,13 @@ public struct MainTrackerView: View {
         .buttonStyle(PlainButtonStyle())
     }
 
-    // MARK: - Section 2: Session & Inline Exams / Tests
-    private var sessionGradingSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                Text("СЕССИЯ И АТТЕСТАЦИЯ")
-                    .font(.system(size: 11, weight: .bold, design: .rounded))
-                    .foregroundColor(.white.opacity(0.5))
-
-                Spacer()
-
-                if let gpa = sessionAverageGPA {
-                    Text("Средний балл: \(gpa)")
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
-                        .foregroundColor(.yellow)
-                }
-            }
-            .padding(.horizontal, 4)
-            .padding(.top, 4)
-
-            VStack(spacing: 8) {
-                ForEach(store.activeSubjects) { subject in
-                    compactSessionSubjectRow(subject: subject)
-                }
-            }
-        }
-    }
-
-    private func compactSessionSubjectRow(subject: Subject) -> some View {
-        let sessionItem = store.getSessionItem(for: subject.id)
-        let isExam = subject.assessmentType == .exam || subject.assessmentType == .diffTest
-
-        return HStack(spacing: 10) {
-            // Admission Checkbox
-            Button {
-                store.toggleAdmission(for: subject.id)
-            } label: {
-                Image(systemName: subject.isAdmittedToExam ? "checkmark.shield.fill" : "shield")
-                    .font(.system(size: 16))
-                    .foregroundColor(subject.isAdmittedToExam ? .green : .white.opacity(0.3))
-            }
-            .buttonStyle(PlainButtonStyle())
-
-            // Subject Name & Type
-            VStack(alignment: .leading, spacing: 2) {
-                Text(subject.name)
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
-                    .foregroundColor(.white)
-                    .lineLimit(1)
-
-                Text(subject.assessmentType.rawValue)
-                    .font(.system(size: 10))
-                    .foregroundColor(.white.opacity(0.5))
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            // Inline Quick Grading Buttons
-            if isExam {
-                HStack(spacing: 4) {
-                    ForEach([2, 3, 4, 5], id: \.self) { gradeVal in
-                        let isSelected = sessionItem?.grade?.rawValue == gradeVal
-                        Button {
-                            var item = sessionItem ?? SessionItem(subjectId: subject.id)
-                            item.grade = isSelected ? nil : ExamGrade(rawValue: gradeVal)
-                            store.updateSessionItem(item)
-                            HapticManager.shared.touchGlass()
-                        } label: {
-                            Text("\(gradeVal)")
-                                .font(.system(size: 12, weight: .bold, design: .rounded))
-                                .foregroundColor(isSelected ? .white : .white.opacity(0.6))
-                                .frame(width: 26, height: 26)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 6)
-                                        .fill(isSelected ? (gradeVal == 5 ? Color.green : (gradeVal == 4 ? Color.blue : (gradeVal == 3 ? Color.orange : Color.red))) : Color.white.opacity(0.06))
-                                )
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                    }
-                }
-            } else {
-                let isPassed = sessionItem?.testResult == .passed
-                Button {
-                    var item = sessionItem ?? SessionItem(subjectId: subject.id)
-                    item.testResult = isPassed ? .failed : .passed
-                    store.updateSessionItem(item)
-                    HapticManager.shared.touchGlass()
-                } label: {
-                    Text(isPassed ? "Сдал" : "Не сдал")
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
-                        .foregroundColor(isPassed ? .green : .white.opacity(0.5))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(Capsule().fill(isPassed ? Color.green.opacity(0.18) : Color.white.opacity(0.06)))
-                }
-                .buttonStyle(PlainButtonStyle())
-            }
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 9)
-        .background(
-            RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .fill(.ultraThinMaterial)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .strokeBorder(Color.white.opacity(0.07), lineWidth: 0.8)
-                )
-        )
-    }
-
-    private var sessionAverageGPA: String? {
-        let grades = store.activeSessionItems.compactMap { $0.grade?.rawValue }
-        guard !grades.isEmpty else { return nil }
-        let avg = Double(grades.reduce(0, +)) / Double(grades.count)
-        return String(format: "%.2f", avg)
-    }
-
     private var emptySubjectsPrompt: some View {
         VStack(spacing: 8) {
             Text("Список предметов пуст")
                 .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.white.opacity(0.7))
 
-            Text("Нажмите «+ Предмет» или откройте настройки вверху для загрузки демо-данных.")
+            Text("Нажмите «+ Предмет» или откройте меню «...» вверху для загрузки демо-данных.")
                 .font(.system(size: 12))
                 .foregroundColor(.white.opacity(0.4))
                 .multilineTextAlignment(.center)

@@ -1,12 +1,40 @@
 import SwiftUI
 
+// MARK: - Subject Importance Level (Уровень важности предмета)
+public enum SubjectImportance: String, CaseIterable, Identifiable, Codable {
+    case critical = "Критичный"
+    case high = "Высокий"
+    case medium = "Средний"
+    case low = "Обычный"
+
+    public var id: String { rawValue }
+
+    public var color: Color {
+        switch self {
+        case .critical: return Color.red
+        case .high: return Color.orange
+        case .medium: return Color.yellow
+        case .low: return Color.green
+        }
+    }
+
+    public var order: Int {
+        switch self {
+        case .critical: return 0
+        case .high: return 1
+        case .medium: return 2
+        case .low: return 3
+        }
+    }
+}
+
 // MARK: - Assessment Type (Форма итогового контроля)
 public enum AssessmentType: String, CaseIterable, Identifiable, Codable {
     case exam = "Экзамен"
     case test = "Зачет"
-    case diffTest = "Дифференцированный зачет"
-    case courseWork = "Курсовая работа"
-    case credit = "Кредит / Практика"
+    case diffTest = "Диф. зачет"
+    case courseWork = "Курсовая"
+    case credit = "Практика"
 
     public var id: String { rawValue }
 
@@ -60,6 +88,7 @@ public struct Subject: Identifiable, Codable, Equatable {
     public var teacherName: String
     public var roomOrLink: String
     public var assessmentType: AssessmentType
+    public var importance: SubjectImportance
     public var minPointsForAdmission: Double?
     public var isAdmittedToExam: Bool
     public var notes: String
@@ -80,6 +109,7 @@ public struct Subject: Identifiable, Codable, Equatable {
         teacherName: String = "",
         roomOrLink: String = "",
         assessmentType: AssessmentType = .exam,
+        importance: SubjectImportance = .medium,
         minPointsForAdmission: Double? = 50.0,
         isAdmittedToExam: Bool = false,
         notes: String = "",
@@ -97,6 +127,7 @@ public struct Subject: Identifiable, Codable, Equatable {
         self.teacherName = teacherName
         self.roomOrLink = roomOrLink
         self.assessmentType = assessmentType
+        self.importance = importance
         self.minPointsForAdmission = minPointsForAdmission
         self.isAdmittedToExam = isAdmittedToExam
         self.notes = notes

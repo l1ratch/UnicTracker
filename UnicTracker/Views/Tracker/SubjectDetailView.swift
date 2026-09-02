@@ -6,8 +6,8 @@ public struct SubjectDetailView: View {
     public var subjectId: UUID
 
     @State private var showTaskCreateSheet: Bool = false
+    @State private var showSubjectEditSheet: Bool = false
     @State private var selectedTaskForEdit: StudyTask? = nil
-    @State private var showBatchGenSheet: Bool = false
     @State private var showAttendanceEditor: Bool = false
     @State private var expandedTaskIds: Set<UUID> = []
 
@@ -22,10 +22,6 @@ public struct SubjectDetailView: View {
 
     private var subjectTasks: [StudyTask] {
         store.tasks.filter { $0.subjectId == subjectId }
-    }
-
-    private var sessionItem: SessionItem? {
-        store.getSessionItem(for: subjectId)
     }
 
     private var completedTasksCount: Int {
@@ -50,16 +46,13 @@ public struct SubjectDetailView: View {
             if let sub = subject {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 14) {
-                        // MARK: - Subject Progress Header
+                        // MARK: - Subject Header Card (Short Code + Full Name + Importance + Edit)
                         subjectHeaderCard(sub: sub)
 
                         // MARK: - Compact Attendance Pod (Лекции и Практики)
                         attendancePod(sub: sub)
 
-                        // MARK: - Session & Exam Status Card
-                        sessionMiniCard(sub: sub)
-
-                        // MARK: - Tasks & Practices List
+                        // MARK: - Tasks & Practices Checklist with Subtasks
                         tasksSection(sub: sub)
 
                         Spacer(minLength: 40)
@@ -72,10 +65,21 @@ public struct SubjectDetailView: View {
                     .foregroundColor(.white.opacity(0.5))
             }
         }
-        .navigationTitle(subject?.name ?? "Дисциплина")
+        .navigationTitle(subject?.shortCode ?? "Дисциплина")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                // Edit Subject Button
+                Button {
+                    showSubjectEditSheet = true
+                    HapticManager.shared.touchGlass()
+                } label: {
+                    Image(systemName: "pencil.circle")
+                        .font(.system(size: 17))
+                        .foregroundColor(.white.opacity(0.8))
+                }
+
+                // Add Task Button
                 Button {
                     showTaskCreateSheet = true
                     HapticManager.shared.touchGlass()
@@ -84,6 +88,11 @@ public struct SubjectDetailView: View {
                         .font(.system(size: 18))
                         .foregroundColor(subject?.themeColor ?? .cyan)
                 }
+            }
+        }
+        .sheet(isPresented: $showSubjectEditSheet) {
+            if let sub = subject {
+                SubjectEditView(store: store, subjectToEdit: sub)
             }
         }
         .sheet(isPresented: $showTaskCreateSheet) {
@@ -99,20 +108,26 @@ public struct SubjectDetailView: View {
         }
     }
 
-    // MARK: - Subject Header Card
+    // MARK: - Subject Header Card (Short Code, Full Name, Importance, Teacher)
     private func subjectHeaderCard(sub: Subject) -> some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 10) {
-                ZStack {
-                    Circle()
-                        .fill(sub.themeColor.opacity(0.2))
-                        .frame(width: 36, height: 36)
-                    Image(systemName: sub.iconName)
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(sub.themeColor)
-                }
+            HStack(alignment: .top, spacing: 10) {
+                // Prominent Short Code Tag
+                Text(sub.shortCode)
+                    .font(.system(size: 18, weight: .heavy, design: .rounded))
+                    .foregroundColor(sub.themeColor)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .fill(sub.themeColor.opacity(0.18))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                                    .strokeBorder(sub.themeColor.opacity(0.4), lineWidth: 1)
+                            )
+                    )
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: 3) {
                     Text(sub.name)
                         .font(.system(size: 16, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
@@ -126,18 +141,27 @@ public struct SubjectDetailView: View {
 
                 Spacer()
 
-                Text(sub.assessmentType.rawValue)
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(sub.assessmentType.badgeColor)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 3)
-                    .background(Capsule().fill(sub.assessmentType.badgeColor.opacity(0.16)))
+                // Importance Level Badge
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(sub.importance.color)
+                        .frame(width: 6, height: 6)
+
+                    Text(sub.importance.rawValue)
+                        .font(.system(size: 11, weight: .semibold, design: .rounded))
+                        .foregroundColor(sub.importance.color)
+                }
+                .padding(.horizontal, 7)
+                .padding(.vertical, 4)
+                .background(
+                    Capsule().fill(sub.importance.color.opacity(0.14))
+                )
             }
 
             // Progress Bar
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
-                    Text("Сдано работ: \(completedTasksCount)/\(subjectTasks.count)")
+                    Text("Сдано практик: \(completedTasksCount)/\(subjectTasks.count)")
                         .font(.system(size: 12, weight: .medium))
                         .foregroundColor(.white.opacity(0.65))
 
@@ -265,78 +289,6 @@ public struct SubjectDetailView: View {
         )
     }
 
-    // MARK: - Session Mini Card
-    private func sessionMiniCard(sub: Subject) -> some View {
-        let isExam = sub.assessmentType == .exam || sub.assessmentType == .diffTest
-
-        return HStack(spacing: 12) {
-            // Admission Checkbox
-            Button {
-                store.toggleAdmission(for: sub.id)
-            } label: {
-                HStack(spacing: 5) {
-                    Image(systemName: sub.isAdmittedToExam ? "checkmark.shield.fill" : "shield")
-                    Text(sub.isAdmittedToExam ? "Допуск есть" : "Без допуска")
-                        .font(.system(size: 12, weight: .semibold, design: .rounded))
-                }
-                .foregroundColor(sub.isAdmittedToExam ? .green : .orange)
-                .padding(.horizontal, 8)
-                .padding(.vertical, 5)
-                .background(Capsule().fill(sub.isAdmittedToExam ? Color.green.opacity(0.12) : Color.orange.opacity(0.12)))
-            }
-            .buttonStyle(PlainButtonStyle())
-
-            Spacer()
-
-            // Inline Grade
-            if isExam {
-                HStack(spacing: 4) {
-                    ForEach([2, 3, 4, 5], id: \.self) { gradeVal in
-                        let isSelected = sessionItem?.grade?.rawValue == gradeVal
-                        Button {
-                            var item = sessionItem ?? SessionItem(subjectId: sub.id)
-                            item.grade = isSelected ? nil : ExamGrade(rawValue: gradeVal)
-                            store.updateSessionItem(item)
-                            HapticManager.shared.touchGlass()
-                        } label: {
-                            Text("\(gradeVal)")
-                                .font(.system(size: 12, weight: .bold, design: .rounded))
-                                .foregroundColor(isSelected ? .white : .white.opacity(0.6))
-                                .frame(width: 26, height: 26)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 6)
-                                        .fill(isSelected ? (gradeVal == 5 ? Color.green : (gradeVal == 4 ? Color.blue : (gradeVal == 3 ? Color.orange : Color.red))) : Color.white.opacity(0.06))
-                                )
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                    }
-                }
-            } else {
-                let isPassed = sessionItem?.testResult == .passed
-                Button {
-                    var item = sessionItem ?? SessionItem(subjectId: sub.id)
-                    item.testResult = isPassed ? .failed : .passed
-                    store.updateSessionItem(item)
-                    HapticManager.shared.touchGlass()
-                } label: {
-                    Text(isPassed ? "Сдал" : "Не сдал")
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
-                        .foregroundColor(isPassed ? .green : .white.opacity(0.5))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
-                        .background(Capsule().fill(isPassed ? Color.green.opacity(0.18) : Color.white.opacity(0.06)))
-                }
-                .buttonStyle(PlainButtonStyle())
-            }
-        }
-        .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(.ultraThinMaterial)
-                .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Color.white.opacity(0.07), lineWidth: 0.8))
-        )
-    }
-
     // MARK: - Tasks & Practices Section
     private func tasksSection(sub: Subject) -> some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -390,8 +342,6 @@ public struct SubjectDetailView: View {
 
     // MARK: - Detailed Task Row with Inline Subtasks
     private func detailedTaskRow(task: StudyTask) -> some View {
-        let isExpanded = expandedTaskIds.contains(task.id) || !task.subtasks.isEmpty
-
         return VStack(alignment: .leading, spacing: 6) {
             HStack(spacing: 10) {
                 // Checkbox
@@ -486,61 +436,5 @@ public struct SubjectDetailView: View {
         let df = DateFormatter()
         df.dateFormat = "dd.MM"
         return df.string(from: date)
-    }
-}
-
-// MARK: - Attendance Edit Sheet (Modal for setting total counts)
-struct AttendanceEditSheet: View {
-    @Environment(\.dismiss) private var dismiss
-    @ObservedObject var store: DataStore
-    public var subject: Subject
-
-    @State private var lecturesAttended: Int
-    @State private var lecturesTotal: Int
-    @State private var practicesAttended: Int
-    @State private var practicesTotal: Int
-
-    init(store: DataStore, subject: Subject) {
-        self.store = store
-        self.subject = subject
-        self._lecturesAttended = State(initialValue: subject.lecturesAttended)
-        self._lecturesTotal = State(initialValue: subject.lecturesTotal)
-        self._practicesAttended = State(initialValue: subject.practicesAttended)
-        self._practicesTotal = State(initialValue: subject.practicesTotal)
-    }
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section("Лекции") {
-                    Stepper("Посещено: \(lecturesAttended)", value: $lecturesAttended, in: 0...lecturesTotal)
-                    Stepper("Всего лекций в плане: \(lecturesTotal)", value: $lecturesTotal, in: 1...100)
-                }
-
-                Section("Практики и семинары") {
-                    Stepper("Посещено: \(practicesAttended)", value: $practicesAttended, in: 0...practicesTotal)
-                    Stepper("Всего практик в плане: \(practicesTotal)", value: $practicesTotal, in: 1...100)
-                }
-            }
-            .navigationTitle("Нормы посещаемости")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Сохранить") {
-                        store.updateAttendance(
-                            for: subject.id,
-                            lecturesAttended: lecturesAttended,
-                            lecturesTotal: lecturesTotal,
-                            practicesAttended: practicesAttended,
-                            practicesTotal: practicesTotal
-                        )
-                        HapticManager.shared.notifySuccess()
-                        dismiss()
-                    }
-                    .font(.system(size: 16, weight: .bold))
-                    .foregroundColor(.cyan)
-                }
-            }
-        }
     }
 }
