@@ -290,13 +290,12 @@ public struct TaskDetailSheet: View {
                     .font(.system(size: 16, weight: .bold))
                 }
             }
-            .sheet(isPresented: $showEditTaskSheet) {
-                TaskEditView(store: store, taskToEdit: task, defaultSubjectId: task.subjectId)
-            }
-            .onChange(of: showEditTaskSheet) {
-                if !showEditTaskSheet, let updated = store.tasks.first(where: { $0.id == task.id }) {
+            .sheet(isPresented: $showEditTaskSheet, onDismiss: {
+                if let updated = store.tasks.first(where: { $0.id == task.id }) {
                     self.task = updated
                 }
+            }) {
+                TaskEditView(store: store, taskToEdit: task, defaultSubjectId: task.subjectId)
             }
             .alert("Удалить задание?", isPresented: $showDeleteConfirm) {
                 Button("Удалить", role: .destructive) {
